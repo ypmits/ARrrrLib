@@ -1,4 +1,4 @@
-import Math2 from 'Math2';
+import Math2 from './Math2';
 
 /**
  * Some math utilities
