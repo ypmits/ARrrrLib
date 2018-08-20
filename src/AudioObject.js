@@ -1,6 +1,5 @@
 import Scene from 'Scene';
 import Audio from 'Audio';
-import console from 'Console';
 
 
 /**
@@ -32,9 +31,6 @@ export default class {
 		this.controller.audio = Audio. soundName;
 		this.speaker.audio = this.controller;
 		this.controller.play();
-		console.log(soundName);
-		// console.log(this.speaker.audio);
-		// console.log(this.speaker.audio.audio);
 	}
 	
 	stop()
