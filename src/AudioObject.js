@@ -16,6 +16,11 @@ export default class {
 		this.speaker.audio = this.controller;
 		if(autoplay != undefined && autoplay) this.play();
 	}
+
+	pause()
+	{
+		this.controller.pause();
+	}
 	
 	play()
 	{

@@ -28,7 +28,7 @@ export default class {
 		return this.screenHeightSignal.lastValue;
 	}
 
-	toString()
+	test()
 	{
 		return "Canvas found! device-width:"+this.screenWidthSignal.lastValue+" device-height:"+this.screenHeightSignal.lastValue;
 	}
