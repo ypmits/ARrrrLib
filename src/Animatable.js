@@ -1,4 +1,4 @@
-const Scene = require('Scene');
+const Scene = require('Scene'); // AR Studio Native
 
 /**
  * An animatable is a wrapper that can animate a certain type of object.
@@ -7,6 +7,11 @@ const Scene = require('Scene');
  * - objectType Canvas:    It can animate objects which contain basic 3D-transforms.
  * - objectType Rectangle: It can animate objects which contain basic 2D-transforms.
  * - It can animate objects which are png-sequences
+ * 
+ * usage:
+ * 
+ * var animatable = new Animatible();
+ * animatable.init("position", "inOutCubic", {x:0,y:0,z:0}, {x:0,y:0,z:0}, 1000, Inifity, false, function(){})
  */
 var Animatable = function(obj, type)
 {
@@ -26,10 +31,6 @@ var Animatable = function(obj, type)
  * type can be:
  * - position
  * - opacity
- * 
- * usage:
- * var animatable = new Animatible();
- * animatable.init("position", "inOutCubic", {x:0,y:0,z:0}, {x:0,y:0,z:0}, 1000, Inifity, false, function(){})
  */
 Animatable.prototype.init = function(obj, type, ease, from, to, duration = 1000, loopCount = 0, mirror = false, funcEndCallback = undefined)
 {
