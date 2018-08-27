@@ -1,5 +1,6 @@
 import TouchGestures from 'TouchGestures';
 import Animation from 'Animation';
+import console from '../Console';
 
 export default class
 {
@@ -11,7 +12,7 @@ export default class
 		TouchGestures.onTap(element).subscribe(updateFunc.bind(this.nb));
 	}
 
-	show(delay)
+	show()
 	{
 		console.log("Show");
 		var driver = Animation.timeDriver({durationMilliseconds:.5, loopCount: 0, mirror: false});
