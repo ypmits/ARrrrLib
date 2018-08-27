@@ -6,13 +6,24 @@ import Scene from 'Scene';
  */
 export default class
 {
-	constructor(maxLength)
+	constructor(sceneObject, maxLength)
 	{
+		this.sceneObject = sceneObject;
+		this.sceneObject.hidden = true;
+		this.useTextfield = false;
 		this.maxLength = maxLength;
 
-		this.t = "";
-		this.textfield = Scene.root.find("textfield");
-		this.textfield.text = this.t;
+		if(this.maxLength == -1)
+		{
+
+		}
+		else
+		{
+			this.useTextfield = true;
+			this.t = "";
+			this.textfield = Scene.root.find("textfield");
+			this.textfield.text = this.t;
+		}
 	}
 
 	/**
