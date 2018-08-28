@@ -1,5 +1,4 @@
 import Animation from 'Animation';
-import R from 'Reactive';
 import console from '../Console';
 
 export default class
