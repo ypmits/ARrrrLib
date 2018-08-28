@@ -1,4 +1,5 @@
 import Scene from 'Scene';
+import Animation from 'Animation';
 
 /**
  * NumPad is a container for an oldskool T9-like button-pad
@@ -12,6 +13,8 @@ export default class
 		this.sceneObject.hidden = false;
 		this.useTextfield = false;
 		this.maxLength = maxLength;
+
+		
 
 		if(this.maxLength == -1)
 		{
@@ -47,21 +50,44 @@ export default class
 	 * Removes the last character if the total length is larger than 0
 	 * @param {AudioObject} sound This is the AudioObject that will be played when the function is called
 	 */
-	removeLast(sound) {
-		if (this.t.length <= 0) return;
-		if (sound != undefined) sound.play();
-		this.t = this.t.substr(0, this.t.length - 1);
-		this.textfield.text = this.t;
+	removeLast(element, sound) {
+
+		this.backgroundMaterial = element.material;
+		this.glow = element.find("Glow");
+		this.number = element.find("Number");
+
+		this.glow.material.opacity = 1;
+		var driver = Animation.timeDriver({durationMilliseconds:150, loopCount: 1, mirror: false});
+		var values = Animation.samplers.easeOutCubic(1, 0);
+		var anim = Animation.animate(driver, values);
+		this.glow.material.opacity = anim;
+		driver.start();
+
+		// if (this.t.length <= 0) return;
+		// if (sound != undefined) sound.play();
+		// this.t = this.t.substr(0, this.t.length - 1);
+		// this.textfield.text = this.t;
 	}
 
 	/**
 	 * Removes all characters if the total length is larger than 0
 	 * @param {AudioObject} sound This is the AudioObject that will be played when the function is called
 	 */
-	removeAll(sound) {
-		if (this.t.length <= 0) return;
-		if (sound != undefined) sound.play();
-		this.t = "";
-		this.textfield.text = this.t;
+	removeAll(element, sound) {
+		this.backgroundMaterial = element.material;
+		this.glow = element.find("Glow");
+		this.number = element.find("Number");
+
+		this.glow.material.opacity = 1;
+		var driver = Animation.timeDriver({durationMilliseconds:150, loopCount: 1, mirror: false});
+		var values = Animation.samplers.easeOutCubic(1, 0);
+		var anim = Animation.animate(driver, values);
+		this.glow.material.opacity = anim;
+		driver.start();
+
+		// if (this.t.length <= 0) return;
+		// if (sound != undefined) sound.play();
+		// this.t = "";
+		// this.textfield.text = this.t;
 	}
 }
