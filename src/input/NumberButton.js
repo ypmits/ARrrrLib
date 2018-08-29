@@ -1,10 +1,12 @@
 import Animation from 'Animation';
 import console from '../Console';
+import TouchGestures from 'TouchGestures';
 
 export default class
 {
-	constructor(element, id)
+	constructor(element, id, numPad)
 	{
+		this.obj = element;
 		this.id = id;
 		
 		this.backgroundMaterial = element.material;
@@ -13,6 +15,11 @@ export default class
 		this.glow.material.opacity = 0;
 		// this.backgroundMaterial.opacity = 0;
 		// this.number.material.opacity = 0;
+
+		TouchGestures.onTap(this.obj).subscribe(function(event) {
+			numPad.add(id, null, null);
+		});
+
 	}
 
 	show()
@@ -42,5 +49,6 @@ export default class
 		this.glow.material.opacity = anim;
 		driver.start();
 		// return this.id;
+
 	}
 }

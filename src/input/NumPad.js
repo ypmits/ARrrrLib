@@ -1,5 +1,7 @@
 import Scene from 'Scene';
 import Animation from 'Animation';
+import console from './../Console';
+// import HttpRequestCode from './../HttpRequestCode';
 
 /**
  * NumPad is a container for an oldskool T9-like button-pad
@@ -9,24 +11,14 @@ export default class
 {
 	constructor(sceneObject, maxLength)
 	{
+		this.secret = Scene.root.find("Secret").material.diffuse;
+		this.secret.currentFrame = 0;
+		this.numbersArray = [];
+
 		this.sceneObject = sceneObject;
 		this.sceneObject.hidden = false;
 		this.useTextfield = false;
 		this.maxLength = maxLength;
-
-		
-
-		if(this.maxLength == -1)
-		{
-
-		}
-		else
-		{
-			this.useTextfield = true;
-			this.t = "";
-			this.textfield = Scene.root.find("textfield");
-			this.textfield.text = this.t;
-		}
 	}
 
 	/**
@@ -37,13 +29,48 @@ export default class
 	 */
 	add(value, soundOK, soundWrong)
 	{
-		if (this.t.length >= this.maxLength) {
-			if (soundWrong != undefined) soundWrong.play();
-			return;
+		// if (this.maxLength) {
+		// 	if (soundWrong != undefined) soundWrong.play();
+		// 	return;
+		// }
+		// if (soundOK != undefined) soundOK.play();
+		
+		if (this.numbersArray.length > this.maxLength-1) {
+			console.log("ARRAY: " + this.numbersArray);
+
+
+			var canvasKeyboard = Scene.root.find("canvasKeyboard");
+			canvasKeyboard.hidden = true;
+
+			if (this.numbersArray.length > this.maxLength) {
+				console.log("Error: this should never happen. Code is longer than 5 chars!")
+				this.numbersArray = this.numbersArray.slice(0, 5);
+			}
+
+			// var userTypedCodeFormatted = this.numbersArray.toString().replace(/,/g,"");
+			// // var userTypedCodeFormatted = userTypedCode
+			// console.log(userTypedCodeFormatted);
+
+
+			// var img = new HttpRequestCode(userTypedCodeFormatted);
+			// console.log(img);
+
+			// temporary code to fix horrible bugs in the prototype, delete asap!!	
+			var faceTrackerCanvas = Scene.root.find("facetracker");
+			faceTrackerCanvas.hidden = false;
+
 		}
-		if (soundOK != undefined) soundOK.play();
-		this.t += value;
-		this.textfield.text = this.t;
+		else
+		{
+			this.numbersArray.push(value);
+			this.secret.currentFrame = this.numbersArray.length;
+			// console.log(this.numbersArray);
+			// console.log(this.secret.currentFrame);
+		}
+
+
+		// this.t += value;
+		// this.textfield.text = this.t;
 	}
 
 	/**
@@ -62,6 +89,11 @@ export default class
 		var anim = Animation.animate(driver, values);
 		this.glow.material.opacity = anim;
 		driver.start();
+
+		this.numbersArray.pop();
+		this.secret.currentFrame = this.numbersArray.length;
+		// console.log(this.numbersArray);
+		// console.log(this.secret.currentFrame);
 
 		// if (this.t.length <= 0) return;
 		// if (sound != undefined) sound.play();
@@ -84,6 +116,11 @@ export default class
 		var anim = Animation.animate(driver, values);
 		this.glow.material.opacity = anim;
 		driver.start();
+
+		this.numbersArray = [];		
+		this.secret.currentFrame = 0;
+		// console.log(this.numbersArray);
+		// console.log(this.secret.currentFrame);
 
 		// if (this.t.length <= 0) return;
 		// if (sound != undefined) sound.play();
