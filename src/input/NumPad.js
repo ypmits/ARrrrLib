@@ -3,7 +3,7 @@ import Animation from 'Animation';
 import Textures from 'Textures';
 
 import console from './../Console';
-// import retrieveImage from './../retrieveImage';
+import retrieveImage from './../retrieveImage';
 
 /**
  * NumPad is a container for an oldskool T9-like button-pad
@@ -13,6 +13,7 @@ export default class
 {
 	constructor(sceneObject, maxLength)
 	{
+
 		this.secret = Scene.root.find("Secret").material.diffuse;
 		this.secret.currentFrame = 0;
 		this.numbersArray = [];
@@ -53,22 +54,22 @@ export default class
 			var userTypedCode = this.numbersArray.toString().replace(/,/g,"");
 			console.log(userTypedCode);
 			
-		// 	// retrieveImage(userTypedCode);
-		// 	retrieveImage().then(result => {
-		// 		// TODO: move this to another place
-		// 		// console.log(result);
-		// 		var name_card = Scene.root.find("name_card");
-		// 		name_card.material.diffuse = result;
-		// 		// console.log(name_card.material.diffuse);
+			// retrieveImage(userTypedCode);
+			retrieveImage().then(result => {
+				// TODO: move this to another place
+				// console.log(result);
+				// var name_card = Scene.root.find("name_card");
+				// name_card.material.diffuse = result;
+				// console.log(name_card.material.diffuse);
 	
-		// 	})
-		// 	// add a fallback default code for wrong typing
+			})
+			// add a fallback default code for wrong typing
 			
-		// 	// temporary code to fix horrible bugs in the prototype
-		// 	// TODO: fix this otherwise
-		// 	var faceTrackerCanvas = Scene.root.find("facetracker");
-		// 	faceTrackerCanvas.hidden = false;
-		// }
+			// temporary code to fix horrible bugs in the prototype
+			// TODO: fix this otherwise
+			var faceTrackerCanvas = Scene.root.find("facetracker");
+			faceTrackerCanvas.hidden = false;
+		}
 	}
 
 	/**
