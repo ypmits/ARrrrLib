@@ -1,4 +1,5 @@
 import Animation from 'Animation';
+import R from 'Reactive';
 import console from '../Console';
 import TouchGestures from 'TouchGestures';
 
@@ -6,6 +7,7 @@ export default class
 {
 	constructor(element, id, numPad)
 	{
+		this.hitArea = element.child("HitArea");
 		this.obj = element;
 		this.id = id;
 		
@@ -16,9 +18,10 @@ export default class
 		// this.backgroundMaterial.opacity = 0;
 		// this.number.material.opacity = 0;
 
-		TouchGestures.onTap(this.obj).subscribe(function(event) {
+		TouchGestures.onTap(this.hitArea).subscribe(function(event) {
+			this.doTypeAnimation();
 			numPad.add(id, null, null);
-		});
+		}.bind(this));
 
 	}
 
@@ -40,7 +43,7 @@ export default class
 	/**
 	 * The function to call when a user types
 	 */
-	doType()
+	doTypeAnimation()
 	{
 		this.glow.material.opacity = 1;
 		var driver = Animation.timeDriver({durationMilliseconds:150, loopCount: 1, mirror: false});
@@ -49,6 +52,5 @@ export default class
 		this.glow.material.opacity = anim;
 		driver.start();
 		// return this.id;
-
 	}
 }
