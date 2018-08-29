@@ -1,7 +1,9 @@
 import Scene from 'Scene';
 import Animation from 'Animation';
+import Textures from 'Textures';
+
 import console from './../Console';
-// import HttpRequestCode from './../HttpRequestCode';
+// import retrieveImage from './../retrieveImage';
 
 /**
  * NumPad is a container for an oldskool T9-like button-pad
@@ -44,22 +46,29 @@ export default class
 			canvasKeyboard.hidden = true;
 
 			if (this.numbersArray.length > this.maxLength) {
-				console.log("Error: this should never happen. Code is longer than 5 chars! Cutting off the excess")
-				this.numbersArray = this.numbersArray.slice(0, 5);
+				console.log("Error: this should never happen. Code is longer than 6 chars! Cutting off the excess")
+				this.numbersArray = this.numbersArray.slice(0, this.maxLength);
 			}
 
 			var userTypedCode = this.numbersArray.toString().replace(/,/g,"");
-
-			// var requestResult = new HttpRequestCode().retrieveImage(userTypedCode);
-			// console.log("=======requestResult below: =========");
-			// console.log(requestResult);
-			// console.log("=====================================");
-
-			// temporary code to fix horrible bugs in the prototype, delete asap!!	
-			var faceTrackerCanvas = Scene.root.find("facetracker");
-			faceTrackerCanvas.hidden = false;
-
-		}
+			console.log(userTypedCode);
+			
+		// 	// retrieveImage(userTypedCode);
+		// 	retrieveImage().then(result => {
+		// 		// TODO: move this to another place
+		// 		// console.log(result);
+		// 		var name_card = Scene.root.find("name_card");
+		// 		name_card.material.diffuse = result;
+		// 		// console.log(name_card.material.diffuse);
+	
+		// 	})
+		// 	// add a fallback default code for wrong typing
+			
+		// 	// temporary code to fix horrible bugs in the prototype
+		// 	// TODO: fix this otherwise
+		// 	var faceTrackerCanvas = Scene.root.find("facetracker");
+		// 	faceTrackerCanvas.hidden = false;
+		// }
 	}
 
 	/**
