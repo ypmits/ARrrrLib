@@ -27,7 +27,7 @@ export default class
 
 	show()
 	{
-		console.log("Show");
+		// console.log("Show");
 		var driver = Animation.timeDriver({durationMilliseconds:500, loopCount: 0, mirror: false});
 		var values = Animation.samplers.easeInOutCubic(0, 1);
 		this.anim = Animation.animate(driver, values);

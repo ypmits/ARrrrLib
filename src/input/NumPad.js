@@ -34,43 +34,32 @@ export default class
 		// 	return;
 		// }
 		// if (soundOK != undefined) soundOK.play();
-		
-		if (this.numbersArray.length > this.maxLength-1) {
-			console.log("ARRAY: " + this.numbersArray);
 
+		this.numbersArray.push(value);
+		this.secret.currentFrame = this.numbersArray.length;
+
+		if (this.numbersArray.length >= this.maxLength) {
 
 			var canvasKeyboard = Scene.root.find("canvasKeyboard");
 			canvasKeyboard.hidden = true;
 
 			if (this.numbersArray.length > this.maxLength) {
-				console.log("Error: this should never happen. Code is longer than 5 chars!")
+				console.log("Error: this should never happen. Code is longer than 5 chars! Cutting off the excess")
 				this.numbersArray = this.numbersArray.slice(0, 5);
 			}
 
-			// var userTypedCodeFormatted = this.numbersArray.toString().replace(/,/g,"");
-			// // var userTypedCodeFormatted = userTypedCode
-			// console.log(userTypedCodeFormatted);
+			var userTypedCode = this.numbersArray.toString().replace(/,/g,"");
 
-
-			// var img = new HttpRequestCode(userTypedCodeFormatted);
-			// console.log(img);
+			// var requestResult = new HttpRequestCode().retrieveImage(userTypedCode);
+			// console.log("=======requestResult below: =========");
+			// console.log(requestResult);
+			// console.log("=====================================");
 
 			// temporary code to fix horrible bugs in the prototype, delete asap!!	
 			var faceTrackerCanvas = Scene.root.find("facetracker");
 			faceTrackerCanvas.hidden = false;
 
 		}
-		else
-		{
-			this.numbersArray.push(value);
-			this.secret.currentFrame = this.numbersArray.length;
-			// console.log(this.numbersArray);
-			// console.log(this.secret.currentFrame);
-		}
-
-
-		// this.t += value;
-		// this.textfield.text = this.t;
 	}
 
 	/**
