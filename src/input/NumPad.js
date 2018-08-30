@@ -104,18 +104,25 @@ export default class
 	}
 
 
-		/**
-	 * Removes all characters if the total length is larger than 0
-	 * @param {AudioObject} sound This is the AudioObject that will be played when the function is called
+	/**
+	 * Applies retrieved texture or a visitor badge depending on the element
+	 * @param {Object} element This is the output of the server request promise/fetch operation
 	 */
 	applyRetrievedTexture(element) {
 
+		let name_card = Scene.root.find('name_card');
+
 		if (element.toString().endsWith('.png')) {
-			console.log("image: " + element);
-			console.log("assign correct badge");
+			// console.log("image: " + element);
+			// console.log("assign correct badge");
+			name_card.material.diffuse.url = element;
+
 		} else {
 			console.log("any error: " + element);
 			console.log("assign visitor badge");
+			// const visitorNameCard = Mat.nameCardVisitorMaterial; // does not work
+			const visitorNameCard = "https://website.test/data/maniacs/badge_8d25802c-89c6-4ca9-ac8d-279521baa1f1.png";
+			name_card.material.diffuse.url = visitorNameCard;
 		}
 	}
 }
