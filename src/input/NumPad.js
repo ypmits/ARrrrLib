@@ -32,12 +32,6 @@ export default class
 	 */
 	add(value, soundOK, soundWrong)
 	{
-		// if (this.maxLength) {
-		// 	if (soundWrong != undefined) soundWrong.play();
-		// 	return;
-		// }
-		// if (soundOK != undefined) soundOK.play();
-
 		this.numbersArray.push(value);
 		this.secret.currentFrame = this.numbersArray.length;
 
@@ -52,19 +46,15 @@ export default class
 			}
 
 			var userTypedCode = this.numbersArray.toString().replace(/,/g,"");
-			console.log(userTypedCode);
+			console.log("== The user typed the following code: " + userTypedCode);
 			
-			// retrieveImage(userTypedCode);
-			retrieveImage().then(result => {
-				// TODO: move this to another place
-				// console.log(result);
-				// var name_card = Scene.root.find("name_card");
-				// name_card.material.diffuse = result;
-				// console.log(name_card.material.diffuse);
-	
-			})
-			// add a fallback default code for wrong typing
-			
+			retrieveImage(userTypedCode).then(result  => {
+					var img =  result.data.image;
+					this.applyRetrievedTexture(img);
+				}).catch(error => {
+					this.applyRetrievedTexture(error);
+				});
+
 			// temporary code to fix horrible bugs in the prototype
 			// TODO: fix this otherwise
 			var faceTrackerCanvas = Scene.root.find("facetracker");
@@ -91,13 +81,6 @@ export default class
 
 		this.numbersArray.pop();
 		this.secret.currentFrame = this.numbersArray.length;
-		// console.log(this.numbersArray);
-		// console.log(this.secret.currentFrame);
-
-		// if (this.t.length <= 0) return;
-		// if (sound != undefined) sound.play();
-		// this.t = this.t.substr(0, this.t.length - 1);
-		// this.textfield.text = this.t;
 	}
 
 	/**
@@ -118,12 +101,21 @@ export default class
 
 		this.numbersArray = [];		
 		this.secret.currentFrame = 0;
-		// console.log(this.numbersArray);
-		// console.log(this.secret.currentFrame);
+	}
 
-		// if (this.t.length <= 0) return;
-		// if (sound != undefined) sound.play();
-		// this.t = "";
-		// this.textfield.text = this.t;
+
+		/**
+	 * Removes all characters if the total length is larger than 0
+	 * @param {AudioObject} sound This is the AudioObject that will be played when the function is called
+	 */
+	applyRetrievedTexture(element) {
+
+		if (element.toString().endsWith('.png')) {
+			console.log("image: " + element);
+			console.log("assign correct badge");
+		} else {
+			console.log("any error: " + element);
+			console.log("assign visitor badge");
+		}
 	}
 }
