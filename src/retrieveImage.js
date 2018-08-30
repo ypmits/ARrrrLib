@@ -3,10 +3,12 @@ import Scene from 'Scene';
 import Networking from 'Networking';
 import Diagnostics from 'Diagnostics';
 
-    
+//EXAMPLE CODES
+// 015536 long name
+// 918003 short name
 function retrieveImage(code)
 {
-    var api = "https://test.website";
+    var api = "https://website.test";
 
     const url = api + "/api/maniac/retrieve?code=" + code;
     
