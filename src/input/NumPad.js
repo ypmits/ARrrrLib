@@ -9,10 +9,8 @@ import console from './../Console';
  */
 export default class
 {
-	constructor(sceneObject, maxLength)
+	constructor(maxLength)
 	{
-		this.secret = Scene.root.find("Secret").material.diffuse;
-		this.secret.currentFrame = 0;
 		this.numbersArray = [];
 
 		this.sceneObject = sceneObject;
@@ -29,48 +27,17 @@ export default class
 	 */
 	add(value, soundOK, soundWrong)
 	{
-		// if (this.maxLength) {
-		// 	if (soundWrong != undefined) soundWrong.play();
-		// 	return;
-		// }
-		// if (soundOK != undefined) soundOK.play();
-		
 		if (this.numbersArray.length > this.maxLength-1) {
-			console.log("ARRAY: " + this.numbersArray);
-
-
-			var canvasKeyboard = Scene.root.find("canvasKeyboard");
-			canvasKeyboard.hidden = true;
-
 			if (this.numbersArray.length > this.maxLength) {
 				console.log("Error: this should never happen. Code is longer than 5 chars!")
 				this.numbersArray = this.numbersArray.slice(0, 5);
 			}
-
-			// var userTypedCodeFormatted = this.numbersArray.toString().replace(/,/g,"");
-			// // var userTypedCodeFormatted = userTypedCode
-			// console.log(userTypedCodeFormatted);
-
-
-			// var img = new HttpRequestCode(userTypedCodeFormatted);
-			// console.log(img);
-
-			// temporary code to fix horrible bugs in the prototype, delete asap!!	
-			var faceTrackerCanvas = Scene.root.find("facetracker");
-			faceTrackerCanvas.hidden = false;
-
 		}
 		else
 		{
 			this.numbersArray.push(value);
 			this.secret.currentFrame = this.numbersArray.length;
-			// console.log(this.numbersArray);
-			// console.log(this.secret.currentFrame);
 		}
-
-
-		// this.t += value;
-		// this.textfield.text = this.t;
 	}
 
 	/**
@@ -92,14 +59,8 @@ export default class
 
 		this.numbersArray.pop();
 		this.secret.currentFrame = this.numbersArray.length;
-		// console.log(this.numbersArray);
-		// console.log(this.secret.currentFrame);
-
-		// if (this.t.length <= 0) return;
-		// if (sound != undefined) sound.play();
-		// this.t = this.t.substr(0, this.t.length - 1);
-		// this.textfield.text = this.t;
 	}
+
 
 	/**
 	 * Removes all characters if the total length is larger than 0
@@ -119,12 +80,5 @@ export default class
 
 		this.numbersArray = [];		
 		this.secret.currentFrame = 0;
-		// console.log(this.numbersArray);
-		// console.log(this.secret.currentFrame);
-
-		// if (this.t.length <= 0) return;
-		// if (sound != undefined) sound.play();
-		// this.t = "";
-		// this.textfield.text = this.t;
 	}
 }
