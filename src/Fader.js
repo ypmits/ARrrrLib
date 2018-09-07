@@ -17,9 +17,11 @@ import Ease from './../../FARLib/src/Ease';
  */
 export default class
 {
-	constructor(material, duration, delay)
+	constructor(objWithMaterial, duration, delay)
 	{
-		this.material = material;
+		this.obj = objWithMaterial;
+		if(objWithMaterial == null) throw "You should add a 'objWithMaterial' inside the constructor (which should also have a material by the way)!";
+		this.material = objWithMaterial.material;
 		this.opacity = 0;
 		this.material.opacity = this.opacity;
 		this.duration = (duration != undefined && duration > 0) ? duration : 0;
@@ -92,6 +94,6 @@ export default class
 	}
 
 	toString() {
-        return `	--== MaterialFader[materialName:${this.material.name}, opacity=${this.opacity}, duration=${this.duration}, delay:${this.delay}]`+"	==--\n";
+        return `	--== Fader[materialName:${this.material.name}, opacity=${this.opacity}, duration=${this.duration}, delay:${this.delay}]`+"	==--\n";
     }
 }
