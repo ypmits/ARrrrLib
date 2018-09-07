@@ -1,22 +1,28 @@
 import Animation from 'Animation';
 import Time from 'Time';
-
+import { debug } from 'util';
+// import console from './../../FARLib/src/Console';
 
 /**
  * Fades the opacity of a material in- and out with a simple 'show' and 'hide' function
  * Example:
- * import 'Fader' from 'MaterialFader';
+ * import 'Fader' from 'Fader';
  * 
  * var f = new Fader(Scene.root.find("rectangle").material, 500);
- * f.show(); // You can override the duration and the delay
- * f.hide(); // You can override the duration and the delay
+ * f.show(duration, delay); // You can override the duration and the delay in this function
+ * f.hide(duration, delay); // You can override the duration and the delay in this function
+ * 
+ * NOTE:
+ * You cannot fade in a text-function. Somehow you cannot call the material-function on the text-object to fade.
+ * If you want to fade that material you have to do a 'Materials.getTexture("textureName")' to do that.
  */
 export default class
 {
 	constructor(material, duration, delay)
 	{
 		this.material = material;
-		this.material.opacity = 0;
+		this.opacity = 0;
+		this.material.opacity = this.opacity;
 		this.duration = (duration != undefined && duration > 0) ? duration : 0;
 		this.delay = (delay != undefined && delay > 0) ? delay : 0;
 	}
@@ -33,7 +39,7 @@ export default class
 		this.delay = (delay != undefined && delay > 0) ? delay : this.delay;
 
 		this.driver = Animation.timeDriver({durationMilliseconds:this.duration, loopCount: 1, mirror: false});
-		this.values = Animation.samplers.easeInOutCubic(0, 1);
+		this.values = Animation.samplers.easeInOutCubic(this.opacity, 1);
 		this.anim = Animation.animate(this.driver, this.values);
 
 		if(this.delay && this.delay > 0)
@@ -41,12 +47,15 @@ export default class
 			Time.setTimeout(
 				function () { 
 					this.material.opacity = this.anim;
+					if(this.driver != undefined) this.driver.reset();
 					this.driver.start();
 				}.bind(this), this.delay);
 		} else {
 			this.material.opacity = this.anim;
+			if(this.driver != undefined) this.driver.reset();
 			this.driver.start();
 		}
+		this.opacity = 1;
 	}
 
 	/**
@@ -61,7 +70,7 @@ export default class
 		this.delay = (delay != undefined && delay > 0) ? delay : this.delay;
 
 		this.driver = Animation.timeDriver({durationMilliseconds:this.duration, loopCount: 1, mirror: false});
-		this.values = Animation.samplers.easeInOutCubic(1, 0);
+		this.values = Animation.samplers.easeInOutCubic(this.opacity, 0);
 		this.anim = Animation.animate(this.driver, this.values);
 
 		if(this.delay && this.delay > 0)
@@ -69,11 +78,18 @@ export default class
 			Time.setTimeout(
 				function () { 
 					this.material.opacity = this.anim;
+					if(this.driver != undefined) this.driver.reset();
 					this.driver.start();
 				}.bind(this), this.delay);
 		} else {
 			this.material.opacity = this.anim;
+			if(this.driver != undefined) this.driver.reset();
 			this.driver.start();
 		}
+		this.opacity = 0;
 	}
+
+	toString() {
+        return `	--== MaterialFader[materialName:${this.material.name}, opacity=${this.opacity}, duration=${this.duration}, delay:${this.delay}]`+"	==--\n";
+    }
 }
