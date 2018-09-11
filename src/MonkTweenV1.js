@@ -348,3 +348,4 @@ function MonkTween(element)
 
     return self;
 }
+export default MonkTween;
