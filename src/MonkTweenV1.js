@@ -325,7 +325,7 @@ function MonkTween(element)
     self.onComplete = function(callback) {
 
         if (callback && typeof(callback) === "function") {
-            self.animationValues.drivers.driverMoveY.onCompleted().subscribe(function(e){
+            self.animationValues.drivers.driverMoveX.onCompleted().subscribe(function(e){
                 callback();
             });
         }
