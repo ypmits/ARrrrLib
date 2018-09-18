@@ -1,284 +1,282 @@
-var Scene = require('Scene');
-var Diagnostics = require('Diagnostics');
-var Animation = require('Animation');
-var Reactive = require('Reactive');
+import Scene from 'Scene';
+import Diagnostics from 'Diagnostics';
+import Animation from 'Animation';
+import Reactive from 'Reactive';
 
-var rect = Scene.root.find("rect");
+export default class {
+	/**
+	 * Example:
+		var rect = Scene.root.find("rect");
+		var tween = ARrrrTween(rect, [{x:0, duration: 2000},{y: 100, duration: 2000}, {rotationZ: 360, duration: 2000}, {scaleX: 2, duration: 2000}, {scaleY: 20, duration: 2000}]).onComplete(function(){
+			Diagnostics.log("Done!");
+		});
+	 */
+	constructor(object, values) {
+		//Set values and controls
+		this.object = object;
+		this.values = values;
 
-var tween = ARrrrTween(rect, [{x:0, duration: 2000},{y: 100, duration: 2000}, {rotationZ: 360, duration: 2000}, {scaleX: 2, duration: 2000}, {scaleY: 20, duration: 2000}]).onComplete(function(){
-    Diagnostics.log("Done!");
-});
+		this.offset = {
+			transform: {
+				x: 0,
+				y: 0,
+				z: 0,
+				rotationX: 0,
+				rotationY: 0,
+				rotationZ: 0,
+				scaleX: 1,
+				scaleY: 1,
+				scaleZ: 1,
+			},
+			materials: {
+				opacity: 1
+			}
+		}
 
-function ARrrrTween(object, values) {
+		this.defaultControls = {
+			duration: 500,
+			loopCount: 1,
+			mirror: false,
+			ease: "easeInOutCubic"
+		}
 
-    //Set self, values and controls
-    var self = {};
-    self.object = object;
-    self.values = values;
+		this.animations = [];
 
-    self.offset = {
-        transform: {
-            x: 0,
-            y: 0,
-            z: 0,
-            rotationX: 0,
-            rotationY: 0,
-            rotationZ: 0,
-            scaleX: 1,
-            scaleY: 1,
-            scaleZ: 1,
-        },
-        materials: {
-            opacity: 1
-        }
-    }
+		StartTween();
+		AssignSignals();
 
-    self.defaultControls = {
-        duration: 500,
-        loopCount: 1,
-        mirror: false,
-        ease: "easeInOutCubic"
-    }
+		//Functions
+		this.onComplete = function (callback) {
 
-    self.animations = [];
+			if (callback && typeof (callback) === "function") {
 
-    StartTween();
-    AssignSignals();
+				var longestDuration = 0;
+				var driver = null;
+				this.animations.forEach(anim => {
+					if (longestDuration < anim.duration) {
+						longestDuration = anim.duration;
+						driver = anim.driver;
+					}
+				});
 
-    //Functions
-    self.onComplete = function(callback) {
+				if (driver != null) {
+					driver.onCompleted().subscribe(function () {
+						callback();
+					});
+				}
+			}
+		}
 
-        if (callback && typeof(callback) === "function") {
+		StartTween()
+		{
+			//var driver = Animation.timeDriver({durationMilliseconds: self.defaultControls.duration, loopCount: self.defaultControls.loopCount, mirror: self.defaultControls.mirror});
+			if (Array.isArray(self.values) == false) {
+				EvaluateData(self.values)
+				return;
+			}
 
-            var longestDuration = 0;
-            var driver = null;
-            self.animations.forEach(anim => {
-                if(longestDuration < anim.duration) {
-                    longestDuration = anim.duration;
-                    driver = anim.driver;
-                }
-            });
+			this.values.forEach(valuesElement => {
+				EvaluateData(valuesElement)
+			});
+		}
 
-            if(driver != null) {
-                driver.onCompleted().subscribe(function(){
-                    callback();
-                });
-            }
-        }
+		function AssignSignals() {
+			var x = Reactive.val(0);
+			var y = Reactive.val(0);
+			var z = Reactive.val(0);
 
-        return self;
-    }
+			var xSizeOffset = Reactive.val(0);
+			var ySizeOffset = Reactive.val(0);
+			var zSizeOffset = Reactive.val(0);
 
-    //Methods
-    function StartTween() {
-        //var driver = Animation.timeDriver({durationMilliseconds: self.defaultControls.duration, loopCount: self.defaultControls.loopCount, mirror: self.defaultControls.mirror});
-        if(Array.isArray(self.values) == false) {
-            EvaluateData(self.values)
-            return;
-        }
-        
-        self.values.forEach(valuesElement => {
-            EvaluateData(valuesElement)
-        });       
-    }
+			var xRotationOffset = Reactive.val(0);
+			var yRotationOffset = Reactive.val(0);
 
-    function AssignSignals() {
-        var x = Reactive.val(0);
-        var y = Reactive.val(0);
-        var z = Reactive.val(0);
+			//Assign signals and calculate offset
+			this.animations.forEach(animation => {
+				//MoveX
+				if (animation.id == "x") {
+					x = animation.signal;
+				}
+				//MoveY
+				if (animation.id == "y") {
+					y = animation.signal;
+				}
+				//MoveZ
+				if (animation.id == "z") {
+					z = animation.signal;
+				}
 
-        var xSizeOffset = Reactive.val(0);
-        var ySizeOffset = Reactive.val(0);
-        var zSizeOffset = Reactive.val(0);
+				//RotationZ
+				if (animation.id == "rotationZ") {
+					var scaleX = Reactive.val(1);
+					var scaleY = Reactive.val(1);
 
-        var xRotationOffset = Reactive.val(0);
-        var yRotationOffset = Reactive.val(0);
+					this.animations.forEach(element => {
+						if (element.id == "scaleX") {
+							scaleX = element.signal;
+						}
+						if (element.id == "scaleY") {
+							scaleY = element.signal;
+						}
+					});
+					var angle = 0;
+					var h = 0;
 
-        //Assign signals and calculate offset
-        self.animations.forEach(animation => {
-            //MoveX
-            if(animation.id == "x") {
-                x = animation.signal;
-            }
-            //MoveY
-            if(animation.id == "y") {
-                y = animation.signal;
-            }
-            //MoveZ
-            if(animation.id == "z") {
-                z = animation.signal;
-            }
+					h = Reactive.sqrt(Reactive.add(this.object.bounds.height.div(2).mul(scaleY).pow(2), this.object.bounds.width.div(2).mul(scaleX).pow(2)));
 
-            //RotationZ
-            if(animation.id == "rotationZ") {
-                var scaleX = Reactive.val(1);
-                var scaleY = Reactive.val(1);
-                
-                self.animations.forEach(element => {
-                    if(element.id == "scaleX") {
-                        scaleX = element.signal;
-                    }
-                    if(element.id == "scaleY") {
-                        scaleY = element.signal;
-                    }
-                });
-                var angle = 0;
-                var h = 0;
+					angle = Reactive.atan2(this.object.bounds.height.div(2).mul(scaleY).mul(1), this.object.bounds.width.div(2).mul(scaleX).mul(-1));
 
-                h = Reactive.sqrt(Reactive.add(self.object.bounds.height.div(2).mul(scaleY).pow(2), self.object.bounds.width.div(2).mul(scaleX).pow(2)));
+					xRotationOffset = Reactive.cos(animation.signal.sub(angle)).mul(h).add(this.object.bounds.width.div(2).mul(scaleX));
+					yRotationOffset = Reactive.sin(animation.signal.sub(angle)).mul(h).add(this.object.bounds.height.div(2).mul(scaleY));
+					this.object.transform.rotationZ = animation.signal;
+				}
+				//RotationX
+				if (animation.id == "rotationX") {
+					var scaleX = Reactive.val(1);
+					var scaleY = Reactive.val(1);
 
-                angle = Reactive.atan2(self.object.bounds.height.div(2).mul(scaleY).mul(1),self.object.bounds.width.div(2).mul(scaleX).mul(-1));
+					this.animations.forEach(element => {
+						if (element.id == "scaleX") {
+							scaleX = element.signal;
+						}
+						if (element.id == "scaleY") {
+							scaleY = element.signal;
+						}
+					});
+					var angle = 0;
+					var h = 0;
 
-                xRotationOffset = Reactive.cos(animation.signal.sub(angle)).mul(h).add(self.object.bounds.width.div(2).mul(scaleX));
-                yRotationOffset = Reactive.sin(animation.signal.sub(angle)).mul(h).add(self.object.bounds.height.div(2).mul(scaleY));
-                self.object.transform.rotationZ = animation.signal;
-            }
-            //RotationX
-            if(animation.id == "rotationX") {
-                var scaleX = Reactive.val(1);
-                var scaleY = Reactive.val(1);
-                
-                self.animations.forEach(element => {
-                    if(element.id == "scaleX") {
-                        scaleX = element.signal;
-                    }
-                    if(element.id == "scaleY") {
-                        scaleY = element.signal;
-                    }
-                });
-                var angle = 0;
-                var h = 0;
+					h = Reactive.sqrt(Reactive.add(this.object.bounds.height.div(2).mul(scaleY).pow(2), this.object.bounds.width.div(2).mul(scaleX).pow(2)));
 
-                h = Reactive.sqrt(Reactive.add(self.object.bounds.height.div(2).mul(scaleY).pow(2), self.object.bounds.width.div(2).mul(scaleX).pow(2)));
+					angle = Reactive.atan2(this.object.bounds.height.div(2).mul(scaleY).mul(1), this.object.bounds.width.div(2).mul(scaleX).mul(-1));
 
-                angle = Reactive.atan2(self.object.bounds.height.div(2).mul(scaleY).mul(1),self.object.bounds.width.div(2).mul(scaleX).mul(-1));
+					xRotationOffset = Reactive.cos(animation.signal.sub(angle)).mul(h).add(this.object.bounds.width.div(2).mul(scaleX));
+					yRotationOffset = Reactive.sin(animation.signal.sub(angle)).mul(h).add(this.object.bounds.height.div(2).mul(scaleY));
+					this.object.transform.rotationZ = animation.signal;
+				}
+				//ScaleX
+				if (animation.id == "scaleX") {
+					xSizeOffset = this.object.bounds.width.div(2).sub(this.object.bounds.width.div(2).mul(animation.signal));
+					this.object.transform.scaleX = animation.signal;
+				}
+				//ScaleY
+				if (animation.id == "scaleY") {
+					ySizeOffset = this.object.bounds.height.div(2).sub(this.object.bounds.height.div(2).mul(animation.signal));
+					this.object.transform.scaleY = animation.signal;
+				}
+			});
 
-                xRotationOffset = Reactive.cos(animation.signal.sub(angle)).mul(h).add(self.object.bounds.width.div(2).mul(scaleX));
-                yRotationOffset = Reactive.sin(animation.signal.sub(angle)).mul(h).add(self.object.bounds.height.div(2).mul(scaleY));
-                self.object.transform.rotationZ = animation.signal;
-            }
-            //ScaleX
-            if(animation.id == "scaleX") {
-                xSizeOffset = self.object.bounds.width.div(2).sub(self.object.bounds.width.div(2).mul(animation.signal));
-                self.object.transform.scaleX = animation.signal;
-            }
-            //ScaleY
-            if(animation.id == "scaleY") {
-                ySizeOffset = self.object.bounds.height.div(2).sub(self.object.bounds.height.div(2).mul(animation.signal));
-                self.object.transform.scaleY = animation.signal;
-            }
-        });
+			this.object.transform.x = x.add(xSizeOffset).add(xRotationOffset);
+			this.object.transform.y = y.add(ySizeOffset).add(yRotationOffset);
+			this.object.transform.z = z;
+		}
 
-        self.object.transform.x = x.add(xSizeOffset).add(xRotationOffset);
-        self.object.transform.y = y.add(ySizeOffset).add(yRotationOffset);
-        self.object.transform.z = z;        
-    }
+		EvaluateData(data)
+		{
+			//Fields
+			var id = "";
+			var start = 0;
+			var end = 0;
 
-    function EvaluateData(data) {
-        //Fields
-        var id = "";
-        var start = 0;
-        var end = 0;
-        
-        var value = null;
+			var value = null;
 
-        //Controls
-        var duration = self.defaultControls.duration;
-        var loopCount = self.defaultControls.loopCount;
-        var mirror = self.defaultControls.mirror;
-        var ease = self.defaultControls.ease;
+			//Controls
+			var duration = this.defaultControls.duration;
+			var loopCount = this.defaultControls.loopCount;
+			var mirror = this.defaultControls.mirror;
+			var ease = this.defaultControls.ease;
 
-        var signal = Reactive.val(0);
+			var signal = Reactive.val(0);
 
-        //Animatable
-            //Move
-        if(data.x != null) {
-            id = "x";
-            start = self.offset.transform.x;
-            end = data.x;
-        }
-        if(data.y != null) {
-            id = "y";
-            start = self.offset.transform.y;
-            end = data.y;
-        }
-        if(data.z != null) {
-            id = "z";
-            start = self.offset.transform.z;
-            end = data.z;
-        }
-            //Rotate
-        if(data.rotationX != null) {
-            id = "rotationX";
-            start = self.offset.transform.rotationX;
-            end = DegToRad(data.rotationX);
-        }
-        if(data.rotationY != null) {
-            id = "rotationY";
-            start = self.offset.transform.rotationY;
-            end = DegToRad(data.rotationY);
-        }
-        if(data.rotationZ != null) {
-            id = "rotationZ";
-            start = self.offset.transform.rotationZ;
-            end = DegToRad(data.rotationZ);
-        }
-            //Scale
-        if(data.scaleX != null) {
-            id = "scaleX";
-            start = self.offset.transform.scaleX;
-            end = data.scaleX;
-        }
-        if(data.scaleY != null) {
-            id = "scaleY";
-            start = self.offset.transform.scaleY;
-            end = data.scaleY;
-        }
-        if(data.scaleZ != null) {
-            id = "scaleZ";
-            start = self.offset.transform.scaleZ;
-            end = data.scaleZ;
-        }
-            //Material
-        if(data.opacity != null) {
-            id = "opacity";
-            start = self.offset.material.opacity;
-            end = data.opacity;
-        }
+			//Animatable
+			//Move
+			if (data.x != null) {
+				id = "x";
+				start = this.offset.transform.x;
+				end = data.x;
+			}
+			if (data.y != null) {
+				id = "y";
+				start = this.offset.transform.y;
+				end = data.y;
+			}
+			if (data.z != null) {
+				id = "z";
+				start = this.offset.transform.z;
+				end = data.z;
+			}
+			//Rotate
+			if (data.rotationX != null) {
+				id = "rotationX";
+				start = this.offset.transform.rotationX;
+				end = DegToRad(data.rotationX);
+			}
+			if (data.rotationY != null) {
+				id = "rotationY";
+				start = this.offset.transform.rotationY;
+				end = DegToRad(data.rotationY);
+			}
+			if (data.rotationZ != null) {
+				id = "rotationZ";
+				start = this.offset.transform.rotationZ;
+				end = DegToRad(data.rotationZ);
+			}
+			//Scale
+			if (data.scaleX != null) {
+				id = "scaleX";
+				start = this.offset.transform.scaleX;
+				end = data.scaleX;
+			}
+			if (data.scaleY != null) {
+				id = "scaleY";
+				start = this.offset.transform.scaleY;
+				end = data.scaleY;
+			}
+			if (data.scaleZ != null) {
+				id = "scaleZ";
+				start = this.offset.transform.scaleZ;
+				end = data.scaleZ;
+			}
+			//Material
+			if (data.opacity != null) {
+				id = "opacity";
+				start = this.offset.material.opacity;
+				end = data.opacity;
+			}
 
-        //Controls
-            //Duration
-        if(data.duration != null) {
-            duration = data.duration;
-        }
-            //Loops
-        if(data.loopCount != null)
-        {
-            loopCount = data.loopCount;
-        }
-            //Mirror
-        if(data.mirror != null) {
-            mirror = data.mirror;
-        }
-            //Ease
-        if(data.ease != null) {
-            ease = data.ease;
-        }
+			//Controls
+			//Duration
+			if (data.duration != null) {
+				duration = data.duration;
+			}
+			//Loops
+			if (data.loopCount != null) {
+				loopCount = data.loopCount;
+			}
+			//Mirror
+			if (data.mirror != null) {
+				mirror = data.mirror;
+			}
+			//Ease
+			if (data.ease != null) {
+				ease = data.ease;
+			}
 
-        var AnimationDriver = Animation.timeDriver({durationMilliseconds: duration, loopCount: loopCount, mirror: mirror});
-        var AnimationValue = Animation.samplers[ease](start, end);
-        var Animate = Animation.animate(AnimationDriver, AnimationValue);
+			var AnimationDriver = Animation.timeDriver({ durationMilliseconds: duration, loopCount: loopCount, mirror: mirror });
+			var AnimationValue = Animation.samplers[ease](start, end);
+			var Animate = Animation.animate(AnimationDriver, AnimationValue);
 
-        signal = Animate;
+			signal = Animate;
 
-        AnimationDriver.start();
-        
-        self.animations.push({id: id, signal: signal, duration:duration, driver: AnimationDriver});
-    }
+			AnimationDriver.start();
 
-    function DegToRad(deg) {
-        return (deg * Math.PI) / 180.0;
-    }
+			this.animations.push({ id: id, signal: signal, duration: duration, driver: AnimationDriver });
+		}
 
-    return self;
+		DegToRad(deg)
+		{
+			return (deg * Math.PI) / 180.0;
+		}
+	}
 }
