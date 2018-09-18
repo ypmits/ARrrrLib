@@ -2,6 +2,7 @@ import Scene from 'Scene';
 import Diagnostics from 'Diagnostics';
 import Animation from 'Animation';
 import Reactive from 'Reactive';
+import Time from 'Time';
 
 export default class {
 	/**
@@ -37,7 +38,8 @@ export default class {
 			duration: 500,
 			loopCount: 1,
 			mirror: false,
-			ease: "easeInOutCubic"
+			ease: "easeInOutCubic",
+			delay: 0
 		}
 
 		this.animations = [];
@@ -188,6 +190,7 @@ export default class {
 		var loopCount = this.defaultControls.loopCount;
 		var mirror = this.defaultControls.mirror;
 		var ease = this.defaultControls.ease;
+		var delay = this.defaultControls.delay;
 
 		var signal = Reactive.val(0);
 
@@ -264,6 +267,10 @@ export default class {
 		if (data.ease != null) {
 			ease = data.ease;
 		}
+		//Delay
+		if(data.delay != null) {
+			delay = data.delay;
+		}
 
 		var AnimationDriver = Animation.timeDriver({ durationMilliseconds: duration, loopCount: loopCount, mirror: mirror });
 		var AnimationValue = Animation.samplers[ease](start, end);
@@ -271,8 +278,13 @@ export default class {
 
 		signal = Animate;
 
-		AnimationDriver.start();
-
+		if(delay == 0) {
+			AnimationDriver.start();
+		} else {
+			Time.setTimeout(function(){
+				AnimationDriver.start();
+			},delay);
+		}
 		this.animations.push({ id: id, signal: signal, duration: duration, driver: AnimationDriver });
 	}
 
