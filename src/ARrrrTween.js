@@ -60,6 +60,7 @@ export default class {
 		this.start = function () {
 			if(this.finished) {
 				this.started = false;
+				this.autoplay = true;
 				this.StartTween();
 			} else {
 				this.StartPlaying();
@@ -75,9 +76,8 @@ export default class {
 		}
 		
 		this.onComplete = function (callback) {
-
 			if (callback && typeof (callback) === "function") {
-
+				
 				var longestDuration = 0;
 				var driver = null;
 				this.animations.forEach(anim => {
@@ -86,8 +86,9 @@ export default class {
 						driver = anim.driver;
 					}
 				});
-
+				
 				if (driver != null) {
+					Diagnostics.log("callback");
 					driver.onCompleted().subscribe(function () {
 						callback();
 					});
@@ -102,34 +103,36 @@ export default class {
 
 	StartTween()
 	{
-		//Set offsets
-		this.offset.transform.x = this.object.transform.x.lastValue;
-		this.offset.transform.y = this.object.transform.y.lastValue;
-		this.offset.transform.z = this.object.transform.z.lastValue;
-		this.offset.transform.rotationX = this.object.transform.rotationX.lastValue;
-		this.offset.transform.rotationY = this.object.transform.rotationY.lastValue;
-		this.offset.transform.rotationZ = this.object.transform.rotationZ.lastValue;
-		this.offset.transform.scaleX = this.object.transform.scaleX.lastValue;
-		this.offset.transform.scaleY = this.object.transform.scaleY.lastValue;
-		this.offset.transform.scaleZ = this.object.transform.scaleZ.lastValue;
-		this.offset.material.opacity = this.object.material.opacity.lastValue;
-		
-		if (Array.isArray(this.values) == false) {
-			this.EvaluateData(this.values);
+		Time.setTimeout(() => {
+			//Set offsets
+			this.offset.transform.x = this.object.transform.x.lastValue;
+			this.offset.transform.y = this.object.transform.y.lastValue;
+			this.offset.transform.z = this.object.transform.z.lastValue;
+			this.offset.transform.rotationX = this.object.transform.rotationX.lastValue;
+			this.offset.transform.rotationY = this.object.transform.rotationY.lastValue;
+			this.offset.transform.rotationZ = this.object.transform.rotationZ.lastValue;
+			this.offset.transform.scaleX = this.object.transform.scaleX.lastValue;
+			this.offset.transform.scaleY = this.object.transform.scaleY.lastValue;
+			this.offset.transform.scaleZ = this.object.transform.scaleZ.lastValue;
+			this.offset.material.opacity = this.object.material.opacity.lastValue;
+			
+			if (Array.isArray(this.values) == false) {
+				this.EvaluateData(this.values);
+
+				if(this.autoplay) {
+					this.StartPlaying();
+				}
+				return;
+			}
+
+			this.values.forEach(valuesElement => {
+				this.EvaluateData(valuesElement)
+			});
 
 			if(this.autoplay) {
 				this.StartPlaying();
 			}
-			return;
-		}
-
-		this.values.forEach(valuesElement => {
-			this.EvaluateData(valuesElement)
-		});
-
-		if(this.autoplay) {
-			this.StartPlaying();
-		}
+		}, 0);
 	}
 
 	AssignSignals() {
@@ -304,17 +307,17 @@ export default class {
 		if (data.scaleX != null) {
 			id = "scaleX";
 			start = this.offset.transform.scaleX;
-			end = this.offset.transform.scaleX + data.scaleX;
+			end = this.offset.transform.scaleX * data.scaleX;
 		}
 		if (data.scaleY != null) {
 			id = "scaleY";
 			start = this.offset.transform.scaleY;
-			end = this.offset.transform.scaleX + data.scaleY;
+			end = this.offset.transform.scaleX * data.scaleY;
 		}
 		if (data.scaleZ != null) {
 			id = "scaleZ";
 			start = this.offset.transform.scaleZ;
-			end = this.offset.transform.scaleX + data.scaleZ;
+			end = this.offset.transform.scaleX * data.scaleZ;
 		}
 		//Material
 		if (data.opacity != null) {
@@ -327,6 +330,10 @@ export default class {
 		//Duration
 		if (data.duration != null) {
 			duration = data.duration;
+
+			if(duration <= 0) {
+				duration = 1;
+			}
 		}
 		//Loops
 		if (data.loopCount != null) {
@@ -355,16 +362,12 @@ export default class {
 	}
 
 	StartPlaying() {
-		Diagnostics.log("play");
 		if(this.started) {
-			Diagnostics.log("play old");
 			//Resume playing
 			this.animations.forEach(anim => {
 				anim.driver.start();
 			});
 		} else {
-			Diagnostics.log("start new")
-			Diagnostics.log(this.animations);
 			//First time started
 			this.AssignSignals();
 
