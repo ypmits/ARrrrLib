@@ -5,7 +5,9 @@ var Reactive = require('Reactive');
 
 var rect = Scene.root.find("rect");
 
-var tween = ARrrrTween(rect, [{x:0, duration: 2000},{y: 100, duration: 2000}, {rotationZ: 360, duration: 2000}, {scaleX: 2, duration: 2000}, {scaleY: 20, duration: 2000}]);
+var tween = ARrrrTween(rect, [{x:0, duration: 2000},{y: 100, duration: 2000}, {rotationZ: 360, duration: 2000}, {scaleX: 2, duration: 2000}, {scaleY: 20, duration: 2000}]).onComplete(function(){
+    Diagnostics.log("Done!");
+});
 
 function ARrrrTween(object, values) {
 
@@ -43,6 +45,31 @@ function ARrrrTween(object, values) {
     StartTween();
     AssignSignals();
 
+    //Functions
+    self.onComplete = function(callback) {
+
+        if (callback && typeof(callback) === "function") {
+
+            var longestDuration = 0;
+            var driver = null;
+            self.animations.forEach(anim => {
+                if(longestDuration < anim.duration) {
+                    longestDuration = anim.duration;
+                    driver = anim.driver;
+                }
+            });
+
+            if(driver != null) {
+                driver.onCompleted().subscribe(function(){
+                    callback();
+                });
+            }
+        }
+
+        return self;
+    }
+
+    //Methods
     function StartTween() {
         //var driver = Animation.timeDriver({durationMilliseconds: self.defaultControls.duration, loopCount: self.defaultControls.loopCount, mirror: self.defaultControls.mirror});
         if(Array.isArray(self.values) == false) {
@@ -246,7 +273,7 @@ function ARrrrTween(object, values) {
 
         AnimationDriver.start();
         
-        self.animations.push({id: id, signal: signal, driver: AnimationDriver});
+        self.animations.push({id: id, signal: signal, duration:duration, driver: AnimationDriver});
     }
 
     function DegToRad(deg) {
