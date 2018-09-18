@@ -12,10 +12,19 @@ export default class {
 			Diagnostics.log("Done!");
 		});
 	 */
-	constructor(object, values) {
+	constructor(object, values, autoplay) {
 		//Set values and controls
 		this.object = object;
 		this.values = values;
+
+		if(autoplay != null) {
+			this.autoplay = autoplay;
+		} else {
+			this.autoplay = true;
+		}
+
+		this.started = false;
+		this.finished = false;
 
 		this.offset = {
 			transform: {
@@ -29,7 +38,7 @@ export default class {
 				scaleY: 1,
 				scaleZ: 1,
 			},
-			materials: {
+			material: {
 				opacity: 1
 			}
 		}
@@ -39,16 +48,32 @@ export default class {
 			loopCount: 1,
 			mirror: false,
 			ease: "easeInOutCubic",
-			delay: 0
+			delay: 0,
+			autoplay: true
 		}
 
 		this.animations = [];
 		
 		this.StartTween();
-		this.AssignSignals();
-		// Diagnostics.log("ARrrrTween");
 
 		//Functions
+		this.start = function () {
+			if(this.finished) {
+				this.started = false;
+				this.StartTween();
+			} else {
+				this.StartPlaying();
+			}
+
+			return this;
+		}
+
+		this.pause = function () {
+			this.StopPlaying();
+
+			return this;
+		}
+		
 		this.onComplete = function (callback) {
 
 			if (callback && typeof (callback) === "function") {
@@ -56,8 +81,8 @@ export default class {
 				var longestDuration = 0;
 				var driver = null;
 				this.animations.forEach(anim => {
-					if (longestDuration < anim.duration) {
-						longestDuration = anim.duration;
+					if (longestDuration < (anim.duration+anim.delay)) {
+						longestDuration = anim.duration+anim.delay;
 						driver = anim.driver;
 					}
 				});
@@ -68,26 +93,53 @@ export default class {
 					});
 				}
 			}
+
+			return this;
 		}
+
+		return this;
 	}
 
 	StartTween()
 	{
-		//var driver = Animation.timeDriver({durationMilliseconds: this.defaultControls.duration, loopCount: this.defaultControls.loopCount, mirror: this.defaultControls.mirror});
+		//Set offsets
+		this.offset.transform.x = this.object.transform.x.lastValue;
+		this.offset.transform.y = this.object.transform.y.lastValue;
+		this.offset.transform.z = this.object.transform.z.lastValue;
+		this.offset.transform.rotationX = this.object.transform.rotationX.lastValue;
+		this.offset.transform.rotationY = this.object.transform.rotationY.lastValue;
+		this.offset.transform.rotationZ = this.object.transform.rotationZ.lastValue;
+		this.offset.transform.scaleX = this.object.transform.scaleX.lastValue;
+		this.offset.transform.scaleY = this.object.transform.scaleY.lastValue;
+		this.offset.transform.scaleZ = this.object.transform.scaleZ.lastValue;
+		this.offset.material.opacity = this.object.material.opacity.lastValue;
+		
 		if (Array.isArray(this.values) == false) {
-			this.EvaluateData(this.values)
+			this.EvaluateData(this.values);
+
+			if(this.autoplay) {
+				this.StartPlaying();
+			}
 			return;
 		}
 
 		this.values.forEach(valuesElement => {
 			this.EvaluateData(valuesElement)
 		});
+
+		if(this.autoplay) {
+			this.StartPlaying();
+		}
 	}
 
 	AssignSignals() {
-		var x = Reactive.val(0);
-		var y = Reactive.val(0);
-		var z = Reactive.val(0);
+		var x = Reactive.val(this.offset.transform.x);
+		var y = Reactive.val(this.offset.transform.y);
+		var z = Reactive.val(this.offset.transform.z);
+
+		var useX = false;
+		var useY = false;
+		var useZ = false;
 
 		var xSizeOffset = Reactive.val(0);
 		var ySizeOffset = Reactive.val(0);
@@ -101,18 +153,24 @@ export default class {
 			//MoveX
 			if (animation.id == "x") {
 				x = animation.signal;
+				useX = true;
 			}
 			//MoveY
 			if (animation.id == "y") {
 				y = animation.signal;
+				useY = true;
 			}
 			//MoveZ
 			if (animation.id == "z") {
 				z = animation.signal;
+				useZ = true;
 			}
 
 			//RotationZ
 			if (animation.id == "rotationZ") {
+				useX = true;
+				useY = true;
+
 				var scaleX = Reactive.val(1);
 				var scaleY = Reactive.val(1);
 
@@ -161,19 +219,34 @@ export default class {
 			}
 			//ScaleX
 			if (animation.id == "scaleX") {
+				useX = true;
+
 				xSizeOffset = this.object.bounds.width.div(2).sub(this.object.bounds.width.div(2).mul(animation.signal));
 				this.object.transform.scaleX = animation.signal;
 			}
 			//ScaleY
 			if (animation.id == "scaleY") {
+				useY = true;
+
 				ySizeOffset = this.object.bounds.height.div(2).sub(this.object.bounds.height.div(2).mul(animation.signal));
 				this.object.transform.scaleY = animation.signal;
 			}
+
+			//Opacity
+			if(animation.id == "opacity") {
+				this.object.material.opacity = animation.signal;
+			}
 		});
 
-		this.object.transform.x = x.add(xSizeOffset).add(xRotationOffset);
-		this.object.transform.y = y.add(ySizeOffset).add(yRotationOffset);
-		this.object.transform.z = z;
+		if(useX) {
+			this.object.transform.x = x.add(xSizeOffset).add(xRotationOffset);
+		}
+		if(useY){
+			this.object.transform.y = y.add(ySizeOffset).add(yRotationOffset);
+		}
+		if(useZ) {
+			this.object.transform.z = z;
+		}
 	}
 
 	EvaluateData(data)
@@ -199,49 +272,49 @@ export default class {
 		if (data.x != null) {
 			id = "x";
 			start = this.offset.transform.x;
-			end = data.x;
+			end = this.offset.transform.x + data.x;
 		}
 		if (data.y != null) {
 			id = "y";
 			start = this.offset.transform.y;
-			end = data.y;
+			end = this.offset.transform.y + data.y;
 		}
 		if (data.z != null) {
 			id = "z";
 			start = this.offset.transform.z;
-			end = data.z;
+			end = this.offset.transform.z + data.z;
 		}
 		//Rotate
 		if (data.rotationX != null) {
 			id = "rotationX";
 			start = this.offset.transform.rotationX;
-			end = DegToRad(data.rotationX);
+			end = this.offset.transform.rotationX + DegToRad(data.rotationX);
 		}
 		if (data.rotationY != null) {
 			id = "rotationY";
 			start = this.offset.transform.rotationY;
-			end = DegToRad(data.rotationY);
+			end = this.offset.transform.rotationY + DegToRad(data.rotationY);
 		}
 		if (data.rotationZ != null) {
 			id = "rotationZ";
 			start = this.offset.transform.rotationZ;
-			end = DegToRad(data.rotationZ);
+			end = this.offset.transform.rotationZ + DegToRad(data.rotationZ);
 		}
 		//Scale
 		if (data.scaleX != null) {
 			id = "scaleX";
 			start = this.offset.transform.scaleX;
-			end = data.scaleX;
+			end = this.offset.transform.scaleX + data.scaleX;
 		}
 		if (data.scaleY != null) {
 			id = "scaleY";
 			start = this.offset.transform.scaleY;
-			end = data.scaleY;
+			end = this.offset.transform.scaleX + data.scaleY;
 		}
 		if (data.scaleZ != null) {
 			id = "scaleZ";
 			start = this.offset.transform.scaleZ;
-			end = data.scaleZ;
+			end = this.offset.transform.scaleX + data.scaleZ;
 		}
 		//Material
 		if (data.opacity != null) {
@@ -278,14 +351,58 @@ export default class {
 
 		signal = Animate;
 
-		if(delay == 0) {
-			AnimationDriver.start();
+		this.animations.push({ id: id, signal: signal, duration: duration, delay: delay, driver: AnimationDriver });
+	}
+
+	StartPlaying() {
+		Diagnostics.log("play");
+		if(this.started) {
+			Diagnostics.log("play old");
+			//Resume playing
+			this.animations.forEach(anim => {
+				anim.driver.start();
+			});
 		} else {
-			Time.setTimeout(function(){
-				AnimationDriver.start();
-			},delay);
+			Diagnostics.log("start new")
+			Diagnostics.log(this.animations);
+			//First time started
+			this.AssignSignals();
+
+			var longestDuration = 0;
+			var driver = null;
+
+			this.animations.forEach(anim => {
+				if (longestDuration < (anim.duration + anim.delay)) {
+					longestDuration = anim.duration + anim.delay;
+					driver = anim.driver;
+				}
+
+				if(anim.delay == 0) {
+					anim.driver.start();
+				} else {
+					Time.setTimeout(function(){
+						anim.driver.start();
+					},anim.delay);
+				}
+			});
+
+			//if finished
+			if (driver != null) {
+				driver.onCompleted().subscribe(function(){
+					this.finished = true;
+					this.started = false;
+					this.animations = [];
+				}.bind(this));
+			}
+
+			this.started = true;
 		}
-		this.animations.push({ id: id, signal: signal, duration: duration, driver: AnimationDriver });
+	}
+
+	StopPlaying() {
+		this.animations.forEach(anim => {
+			anim.driver.stop();
+		});
 	}
 
 	DegToRad(deg)
