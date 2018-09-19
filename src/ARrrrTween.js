@@ -88,7 +88,6 @@ export default class {
 				});
 				
 				if (driver != null) {
-					Diagnostics.log("callback");
 					driver.onCompleted().subscribe(function () {
 						callback();
 					});
@@ -103,36 +102,34 @@ export default class {
 
 	StartTween()
 	{
-		Time.setTimeout(() => {
-			//Set offsets
-			this.offset.transform.x = this.object.transform.x.lastValue;
-			this.offset.transform.y = this.object.transform.y.lastValue;
-			this.offset.transform.z = this.object.transform.z.lastValue;
-			this.offset.transform.rotationX = this.object.transform.rotationX.lastValue;
-			this.offset.transform.rotationY = this.object.transform.rotationY.lastValue;
-			this.offset.transform.rotationZ = this.object.transform.rotationZ.lastValue;
-			this.offset.transform.scaleX = this.object.transform.scaleX.lastValue;
-			this.offset.transform.scaleY = this.object.transform.scaleY.lastValue;
-			this.offset.transform.scaleZ = this.object.transform.scaleZ.lastValue;
-			this.offset.material.opacity = this.object.material.opacity.lastValue;
-			
-			if (Array.isArray(this.values) == false) {
-				this.EvaluateData(this.values);
-
-				if(this.autoplay) {
-					this.StartPlaying();
-				}
-				return;
-			}
-
-			this.values.forEach(valuesElement => {
-				this.EvaluateData(valuesElement)
-			});
+		//Set offsets
+		this.offset.transform.x = this.object.transform.x.lastValue;
+		this.offset.transform.y = this.object.transform.y.lastValue;
+		this.offset.transform.z = this.object.transform.z.lastValue;
+		this.offset.transform.rotationX = this.object.transform.rotationX.lastValue;
+		this.offset.transform.rotationY = this.object.transform.rotationY.lastValue;
+		this.offset.transform.rotationZ = this.object.transform.rotationZ.lastValue;
+		this.offset.transform.scaleX = this.object.transform.scaleX.lastValue;
+		this.offset.transform.scaleY = this.object.transform.scaleY.lastValue;
+		this.offset.transform.scaleZ = this.object.transform.scaleZ.lastValue;
+		this.offset.material.opacity = this.object.material.opacity.lastValue;
+		
+		if (Array.isArray(this.values) == false) {
+			this.EvaluateData(this.values);
 
 			if(this.autoplay) {
 				this.StartPlaying();
 			}
-		}, 0);
+			return;
+		}
+
+		this.values.forEach(valuesElement => {
+			this.EvaluateData(valuesElement)
+		});
+
+		if(this.autoplay) {
+			this.StartPlaying();
+		}
 	}
 
 	AssignSignals() {
@@ -196,42 +193,19 @@ export default class {
 				yRotationOffset = Reactive.sin(animation.signal.sub(angle)).mul(h).add(this.object.bounds.height.div(2).mul(scaleY));
 				this.object.transform.rotationZ = animation.signal;
 			}
-			//RotationX
-			if (animation.id == "rotationX") {
-				var scaleX = Reactive.val(1);
-				var scaleY = Reactive.val(1);
-
-				this.animations.forEach(element => {
-					if (element.id == "scaleX") {
-						scaleX = element.signal;
-					}
-					if (element.id == "scaleY") {
-						scaleY = element.signal;
-					}
-				});
-				var angle = 0;
-				var h = 0;
-
-				h = Reactive.sqrt(Reactive.add(this.object.bounds.height.div(2).mul(scaleY).pow(2), this.object.bounds.width.div(2).mul(scaleX).pow(2)));
-
-				angle = Reactive.atan2(this.object.bounds.height.div(2).mul(scaleY).mul(1), this.object.bounds.width.div(2).mul(scaleX).mul(-1));
-
-				xRotationOffset = Reactive.cos(animation.signal.sub(angle)).mul(h).add(this.object.bounds.width.div(2).mul(scaleX));
-				yRotationOffset = Reactive.sin(animation.signal.sub(angle)).mul(h).add(this.object.bounds.height.div(2).mul(scaleY));
-				this.object.transform.rotationZ = animation.signal;
-			}
+			
 			//ScaleX
 			if (animation.id == "scaleX") {
 				useX = true;
 
-				xSizeOffset = this.object.bounds.width.div(2).sub(this.object.bounds.width.div(2).mul(animation.signal));
+				xSizeOffset = this.object.bounds.width.div(2/this.offset.transform.scaleX).sub(this.object.bounds.width.div(2).mul(animation.signal));
 				this.object.transform.scaleX = animation.signal;
 			}
 			//ScaleY
 			if (animation.id == "scaleY") {
 				useY = true;
 
-				ySizeOffset = this.object.bounds.height.div(2).sub(this.object.bounds.height.div(2).mul(animation.signal));
+				ySizeOffset = this.object.bounds.height.div(2/this.offset.transform.scaleY).sub(this.object.bounds.height.div(2).mul(animation.signal));
 				this.object.transform.scaleY = animation.signal;
 			}
 
@@ -274,56 +248,67 @@ export default class {
 		//Move
 		if (data.x != null) {
 			id = "x";
-			start = this.offset.transform.x;
-			end = this.offset.transform.x + data.x;
+			var startEnd = this.CheckValue(data.x, this.offset.transform.x);
+			start = startEnd.start;
+			end = startEnd.end;
 		}
 		if (data.y != null) {
 			id = "y";
-			start = this.offset.transform.y;
-			end = this.offset.transform.y + data.y;
+
+			var startEnd = this.CheckValue(data.y, this.offset.transform.y);
+			start = startEnd.start;
+			end = startEnd.end;
 		}
 		if (data.z != null) {
 			id = "z";
-			start = this.offset.transform.z;
-			end = this.offset.transform.z + data.z;
+			var startEnd = this.CheckValue(data.z, this.offset.transform.z);
+			start = startEnd.start;
+			end = startEnd.end;
 		}
 		//Rotate
 		if (data.rotationX != null) {
 			id = "rotationX";
-			start = this.offset.transform.rotationX;
-			end = this.offset.transform.rotationX + DegToRad(data.rotationX);
+			var startEnd = this.CheckValue(data.rotationX, this.offset.transform.rotationX, true);
+			start = startEnd.start;
+			end = startEnd.end;
 		}
 		if (data.rotationY != null) {
 			id = "rotationY";
-			start = this.offset.transform.rotationY;
-			end = this.offset.transform.rotationY + DegToRad(data.rotationY);
+			var startEnd = this.CheckValue(data.rotationY, this.offset.transform.rotationY, true);
+			start = startEnd.start;
+			end = startEnd.end;
 		}
 		if (data.rotationZ != null) {
 			id = "rotationZ";
-			start = this.offset.transform.rotationZ;
-			end = this.offset.transform.rotationZ + DegToRad(data.rotationZ);
+			var startEnd = this.CheckValue(data.rotationZ, this.offset.transform.rotationZ, true);
+			start = startEnd.start;
+			end = startEnd.end;
 		}
 		//Scale
 		if (data.scaleX != null) {
 			id = "scaleX";
-			start = this.offset.transform.scaleX;
-			end = this.offset.transform.scaleX * data.scaleX;
+			var startEnd = this.CheckValue(data.scaleX, this.offset.transform.scaleX);
+			start = startEnd.start;
+			end = startEnd.end;
 		}
 		if (data.scaleY != null) {
 			id = "scaleY";
-			start = this.offset.transform.scaleY;
-			end = this.offset.transform.scaleX * data.scaleY;
+			var startEnd = this.CheckValue(data.scaleY, this.offset.transform.scaleY);
+			start = startEnd.start;
+			end = startEnd.end;
 		}
 		if (data.scaleZ != null) {
 			id = "scaleZ";
-			start = this.offset.transform.scaleZ;
-			end = this.offset.transform.scaleX * data.scaleZ;
+			var startEnd = this.CheckValue(data.scaleZ, this.offset.transform.scaleZ);
+			start = startEnd.start;
+			end = startEnd.end;
 		}
 		//Material
 		if (data.opacity != null) {
 			id = "opacity";
-			start = this.offset.material.opacity;
-			end = data.opacity;
+			var startEnd = this.CheckValue(data.opacity, this.offset.material.opacity);
+			start = startEnd.start;
+			end = startEnd.end;
 		}
 
 		//Controls
@@ -359,6 +344,68 @@ export default class {
 		signal = Animate;
 
 		this.animations.push({ id: id, signal: signal, duration: duration, delay: delay, driver: AnimationDriver });
+	}
+
+	CheckValue(data ,offset, isRotation) {
+		var startEnd = {
+			start: 0,
+			end: 0
+		}
+
+		if(isRotation) {
+			if(data.from != null && data.to != null) {
+				//From
+				if(typeof(data.from) == "string") {
+					data.from = Number(data.from);
+					data.from = this.DegToRad(data.from);
+				} else {
+					data.from = this.DegToRad(data.from);
+				}
+				//To
+				if(typeof(data.to) == "string") {
+					data.to = Number(data.to);
+					data.to = this.DegToRad(data.to);
+				} else {
+					data.to = this.DegToRad(data.to);
+				}
+			} else {
+				if(typeof(data) == "string") {
+					data = Number(data);
+					data = this.DegToRad(data);
+				} else {
+					data = this.DegToRad(data);
+				}
+			}
+		}
+
+		//FromTo
+		if(data.from != null && data.to != null) {
+			//From
+			if(typeof(data.from) == "string") {
+				data.from = Number(data.from);
+				startEnd.start = offset + data.from;
+			} else {
+				 startEnd.start = data.from;
+			}
+			//To
+			if(typeof(data.to) == "string") {
+				data.to = Number(data.to);
+				startEnd.end = offset + data.to;
+			} else {
+				 startEnd.end = data.to;
+			}
+		//To
+		} else {
+			startEnd.start = offset;
+			if(typeof(data) == "string") {
+				data = Number(data);
+				startEnd.end = offset + data;
+			} else {
+				startEnd.end = data;
+			}
+		}
+
+		return startEnd;
 	}
 
 	StartPlaying() {
