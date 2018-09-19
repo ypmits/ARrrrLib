@@ -145,8 +145,14 @@ export default class {
 		var ySizeOffset = Reactive.val(0);
 		var zSizeOffset = Reactive.val(0);
 
-		var xRotationOffset = Reactive.val(0);
-		var yRotationOffset = Reactive.val(0);
+		var zRotationOffsetX = Reactive.val(0);
+		var zRotationOffsetY = Reactive.val(0);
+
+		var xRotationOffsetY = Reactive.val(0);
+		var xRotationOffsetZ = Reactive.val(0);
+
+		var yRotationOffsetX = Reactive.val(0);
+		var yRotationOffsetZ = Reactive.val(0);
 
 		//Assign signals and calculate offset
 		this.animations.forEach(animation => {
@@ -166,6 +172,55 @@ export default class {
 				useZ = true;
 			}
 
+			//RotationX
+			if (animation.id == "rotationX") {
+				useY = true;
+				useZ = true;
+
+				var scaleY = Reactive.val(1);
+
+				this.animations.forEach(element => {
+					if (element.id == "scaleY") {
+						scaleY = element.signal;
+					}
+				});
+
+				var angle = 0;
+				var h = 0;
+
+				h = this.object.bounds.height.div(2).mul(scaleY);
+
+				angle = Reactive.atan2(this.object.bounds.height.div(2).mul(scaleY).mul(1), 0);
+
+				xRotationOffsetZ = Reactive.cos(animation.signal.sub(angle)).mul(h).mul(-1);
+				xRotationOffsetY = Reactive.sin(animation.signal.sub(angle)).mul(h).add(this.object.bounds.height.div(2).mul(scaleY));
+				this.object.transform.rotationX = animation.signal;
+			}
+
+			//RotationY
+			if (animation.id == "rotationY") {
+				useX = true;
+				useZ = true;
+
+				var scaleX = Reactive.val(1);
+				this.animations.forEach(element => {
+					if (element.id == "scaleX") {
+						scaleX = element.signal;
+					}
+				});
+
+				var angle = 0;
+				var h = 0;
+				
+				h = this.object.bounds.width.div(2).mul(scaleX);
+				
+				angle = Reactive.atan2(this.object.bounds.width.div(2).mul(scaleX).mul(1), 0);
+
+				yRotationOffsetZ = Reactive.cos(animation.signal.sub(angle)).mul(h);
+				yRotationOffsetX = Reactive.sin(animation.signal.sub(angle)).mul(h).add(this.object.bounds.width.div(2).mul(scaleX));
+				this.object.transform.rotationY = animation.signal;
+			}
+
 			//RotationZ
 			if (animation.id == "rotationZ") {
 				useX = true;
@@ -182,6 +237,7 @@ export default class {
 						scaleY = element.signal;
 					}
 				});
+
 				var angle = 0;
 				var h = 0;
 
@@ -189,8 +245,8 @@ export default class {
 
 				angle = Reactive.atan2(this.object.bounds.height.div(2).mul(scaleY).mul(1), this.object.bounds.width.div(2).mul(scaleX).mul(-1));
 
-				xRotationOffset = Reactive.cos(animation.signal.sub(angle)).mul(h).add(this.object.bounds.width.div(2).mul(scaleX));
-				yRotationOffset = Reactive.sin(animation.signal.sub(angle)).mul(h).add(this.object.bounds.height.div(2).mul(scaleY));
+				zRotationOffsetX = Reactive.cos(animation.signal.sub(angle)).mul(h).add(this.object.bounds.width.div(2).mul(scaleX));
+				zRotationOffsetY = Reactive.sin(animation.signal.sub(angle)).mul(h).add(this.object.bounds.height.div(2).mul(scaleY));
 				this.object.transform.rotationZ = animation.signal;
 			}
 			
@@ -216,13 +272,13 @@ export default class {
 		});
 
 		if(useX) {
-			this.object.transform.x = x.add(xSizeOffset).add(xRotationOffset);
+			this.object.transform.x = x.add(xSizeOffset).add(zRotationOffsetX).add(yRotationOffsetX);
 		}
 		if(useY){
-			this.object.transform.y = y.add(ySizeOffset).add(yRotationOffset);
+			this.object.transform.y = y.add(ySizeOffset).add(zRotationOffsetY).add(xRotationOffsetY);
 		}
 		if(useZ) {
-			this.object.transform.z = z;
+			this.object.transform.z = z.add(xRotationOffsetZ).add(yRotationOffsetZ);
 		}
 	}
 
