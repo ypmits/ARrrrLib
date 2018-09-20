@@ -477,7 +477,7 @@ export default class {
 		var Animate = Animation.animate(AnimationDriver, AnimationValue);
 
 		signal = Animate;
-ea
+
 		AnimationDriver.onCompleted().subscribe(onComplete);
 		AnimationDriver.onAfterIteration().subscribe(onIteration);
 
