@@ -431,9 +431,25 @@ export default class {
 		if (data.loopCount != null) {
 			loopCount = data.loopCount;
 		}
+		if(data.loop != null) {
+			loopCount = data.loop;
+		}
+		if(data.repeat != null) {
+			loopCount = data.repeat;
+		}
+		//Infinite Loop
+		if(loopCount == -1) {
+			loopCount = Infinity;
+		}
 		//Mirror
 		if (data.mirror != null) {
 			mirror = data.mirror;
+		}
+		if(data.yoyo != null) {
+			mirror = data.yoyo;
+		}
+		if(data.pingpong != null) {
+			mirror = data.pingpong;
 		}
 		//Ease
 		if (data.ease != null) {
@@ -461,7 +477,7 @@ export default class {
 		var Animate = Animation.animate(AnimationDriver, AnimationValue);
 
 		signal = Animate;
-
+ea
 		AnimationDriver.onCompleted().subscribe(onComplete);
 		AnimationDriver.onAfterIteration().subscribe(onIteration);
 

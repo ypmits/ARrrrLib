@@ -89,5 +89,8 @@ export default
 	},
 	get InOutSine(){
 		return "easeInOutSine";
+	},
+	get Linear() {
+		return "linear";
 	}
 }
