@@ -4,8 +4,8 @@ ARrrrTween is a Tweening API for AR Studio. To start using ARrrrTween you first 
 It is also recommended to include the Ease file is you want to use different easings.
 
 ```javascript
-import ARrrrTween from '../../../FARLib/src/ARrrrTween';
-import Ease from '../../../FARLib/src/Ease';
+import ARrrrTween from '[PATH]/FARLib/src/ARrrrTween';
+import Ease from '[PATH]FARLib/src/Ease';
 ```
 
 ### Code Examples
