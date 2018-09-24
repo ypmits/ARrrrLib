@@ -19,6 +19,7 @@ export default class {
 
 		this.isPlaying = false;
 
+
 		if(autoplay != null) {
 			this.autoplay = autoplay;
 		} else {
@@ -120,10 +121,12 @@ export default class {
 		this.offset.transform.scaleX = this.object.transform.scaleX.lastValue;
 		this.offset.transform.scaleY = this.object.transform.scaleY.lastValue;
 		this.offset.transform.scaleZ = this.object.transform.scaleZ.lastValue;
-		if(this.object.material != null) {
-			this.offset.material.opacity = this.object.material.opacity.lastValue;
+		if(this.object.text == null) {
+			if(this.object.material != null) {
+				this.offset.material.opacity = this.object.material.opacity.lastValue;
+			}
 		}
-		
+			
 		if (Array.isArray(this.values) == false) {
 			this.EvaluateData(this.values);
 			
@@ -134,16 +137,19 @@ export default class {
 		}
 		
 		this.values.forEach(valuesElement => {
+
 			this.EvaluateData(valuesElement)
 		});
 		
 		if(this.autoplay) {
+			Diagnostics.log("start playing");
 			this.StartPlaying();
 		}
 	}
 
 	AssignSignals() {
 		//Check if UI
+		Diagnostics.log("not an UI element");
 		if(this.object.bounds != null) {
 			var x = Reactive.val(this.offset.transform.x);
 			var y = Reactive.val(this.offset.transform.y);
@@ -414,12 +420,14 @@ export default class {
 			end = startEnd.end;
 		}
 		//Material
-		if(this.object.material != null) {
-			if (data.opacity != null) {
-				id = "opacity";
-				var startEnd = this.CheckValue(data.opacity, this.offset.material.opacity);
-				start = startEnd.start;
-				end = startEnd.end;
+		if(this.object.text == null) {
+			if(this.object.material != null && this.object.text == null) {
+				if (data.opacity != null) {
+					id = "opacity";
+					var startEnd = this.CheckValue(data.opacity, this.offset.material.opacity);
+					start = startEnd.start;
+					end = startEnd.end;
+				}
 			}
 		}
 
@@ -556,6 +564,7 @@ export default class {
 	}
 
 	StartPlaying() {
+		Diagnostics.log("starting");
 		this.isPlaying = true;
 
 		if(this.started) {
