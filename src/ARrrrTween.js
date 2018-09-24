@@ -483,7 +483,11 @@ export default class {
 
 		signal = Animate;
 
-		AnimationDriver.onCompleted().subscribe(onComplete);
+		AnimationDriver.onCompleted().subscribe(function(){
+			if(this.isPlaying) {
+				onComplete();
+			}
+		}.bind(this));
 		AnimationDriver.onAfterIteration().subscribe(onIteration);
 
 		this.animations.push({ id: id, signal: signal, duration: duration, delay: delay, driver: AnimationDriver, onStart: onStart });
