@@ -96,7 +96,6 @@ export default class {
 				if (driver != null) {
 					driver.onCompleted().subscribe(function () {
 						if(this.isPlaying) {
-							Diagnostics.log("completed");
 							callback();
 						}
 					}.bind(this));
@@ -142,14 +141,12 @@ export default class {
 		});
 		
 		if(this.autoplay) {
-			Diagnostics.log("start playing");
 			this.StartPlaying();
 		}
 	}
 
 	AssignSignals() {
 		//Check if UI
-		Diagnostics.log("not an UI element");
 		if(this.object.bounds != null) {
 			var x = Reactive.val(this.offset.transform.x);
 			var y = Reactive.val(this.offset.transform.y);
@@ -564,7 +561,6 @@ export default class {
 	}
 
 	StartPlaying() {
-		Diagnostics.log("starting");
 		this.isPlaying = true;
 
 		if(this.started) {
