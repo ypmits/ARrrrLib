@@ -17,6 +17,8 @@ export default class {
 		this.object = object;
 		this.values = values;
 
+		this.isPlaying = false;
+
 		if(autoplay != null) {
 			this.autoplay = autoplay;
 		} else {
@@ -92,8 +94,11 @@ export default class {
 				
 				if (driver != null) {
 					driver.onCompleted().subscribe(function () {
-						callback();
-					});
+						if(this.isPlaying) {
+							Diagnostics.log("completed");
+							callback();
+						}
+					}.bind(this));
 				}
 			}
 
@@ -547,6 +552,8 @@ export default class {
 	}
 
 	StartPlaying() {
+		this.isPlaying = true;
+
 		if(this.started) {
 			//Resume playing
 			this.animations.forEach(anim => {
@@ -560,11 +567,13 @@ export default class {
 			var driver = null;
 
 			this.animations.forEach(anim => {
+				//Get longest duration foreach driver
 				if (longestDuration < (anim.duration + anim.delay)) {
 					longestDuration = anim.duration + anim.delay;
 					driver = anim.driver;
 				}
 
+				//Start drivers (or start after delay)
 				if(anim.delay == 0) {
 					anim.driver.start();
 					anim.onStart();
@@ -579,9 +588,11 @@ export default class {
 			//if finished
 			if (driver != null) {
 				driver.onCompleted().subscribe(function(){
-					this.finished = true;
-					this.started = false;
-					this.animations = [];
+					if(this.isPlaying) {
+						this.finished = true;
+						this.started = false;
+						this.animations = [];
+					}
 				}.bind(this));
 			}
 
@@ -590,6 +601,8 @@ export default class {
 	}
 
 	StopPlaying() {
+		this.isPlaying = false;
+
 		this.animations.forEach(anim => {
 			anim.driver.stop();
 		});
