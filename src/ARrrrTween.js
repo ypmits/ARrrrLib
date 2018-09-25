@@ -65,6 +65,7 @@ export default class {
 		//Functions
 		this.start = function () {
 			if(this.finished) {
+				this.animations = [];
 				this.started = false;
 				this.autoplay = true;
 				this.StartTween();
@@ -79,6 +80,18 @@ export default class {
 			this.StopPlaying();
 
 			return this;
+		}
+
+		this.reset = function() {
+			this.isPlaying = false;
+			this.started = false;
+			this.finished = false;
+
+			this.animations.forEach(animation => {
+				animation.driver.reset();
+			});
+
+			this.AssignSignals();
 		}
 		
 		this.onComplete = function (callback) {
@@ -600,7 +613,6 @@ export default class {
 					if(this.isPlaying) {
 						this.finished = true;
 						this.started = false;
-						this.animations = [];
 					}
 				}.bind(this));
 			}
