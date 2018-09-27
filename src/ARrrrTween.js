@@ -124,18 +124,20 @@ export default class {
 	StartTween()
 	{
 		//Set offsets
-		this.offset.transform.x = this.object.transform.x.lastValue;
-		this.offset.transform.y = this.object.transform.y.lastValue;
-		this.offset.transform.z = this.object.transform.z.lastValue;
-		this.offset.transform.rotationX = this.object.transform.rotationX.lastValue;
-		this.offset.transform.rotationY = this.object.transform.rotationY.lastValue;
-		this.offset.transform.rotationZ = this.object.transform.rotationZ.lastValue;
-		this.offset.transform.scaleX = this.object.transform.scaleX.lastValue;
-		this.offset.transform.scaleY = this.object.transform.scaleY.lastValue;
-		this.offset.transform.scaleZ = this.object.transform.scaleZ.lastValue;
-		if(this.object.text == null) {
-			if(this.object.material != null) {
-				this.offset.material.opacity = this.object.material.opacity.lastValue;
+		if(this.object.transform != null) {
+			this.offset.transform.x = this.object.transform.x.lastValue;
+			this.offset.transform.y = this.object.transform.y.lastValue;
+			this.offset.transform.z = this.object.transform.z.lastValue;
+			this.offset.transform.rotationX = this.object.transform.rotationX.lastValue;
+			this.offset.transform.rotationY = this.object.transform.rotationY.lastValue;
+			this.offset.transform.rotationZ = this.object.transform.rotationZ.lastValue;
+			this.offset.transform.scaleX = this.object.transform.scaleX.lastValue;
+			this.offset.transform.scaleY = this.object.transform.scaleY.lastValue;
+			this.offset.transform.scaleZ = this.object.transform.scaleZ.lastValue;
+			if(this.object.text == null) {
+				if(this.object.material != null) {
+					this.offset.material.opacity = this.object.material.opacity.lastValue;
+				}
 			}
 		}
 			
@@ -161,6 +163,7 @@ export default class {
 	AssignSignals() {
 		//Check if UI
 		if(this.object.bounds != null) {
+			var value = Reactive.val(0);
 			var x = Reactive.val(this.offset.transform.x);
 			var y = Reactive.val(this.offset.transform.y);
 			var z = Reactive.val(this.offset.transform.z);
@@ -310,6 +313,10 @@ export default class {
 			}
 		} else {
 			this.animations.forEach(animation => {
+				//Value
+				if (animation.id == "value") {
+					this.object = animation.signal;
+				}
 				//Position
 				if(animation.id == "x") {
 					this.object.transform.x = animation.signal;
@@ -371,6 +378,13 @@ export default class {
 		var signal = Reactive.val(0);
 
 		//Animatable
+		//Value
+		if (data.value != null) {
+			id = "value";
+			var startEnd = this.CheckValue(data.value, 0);
+			start = startEnd.start;
+			end = startEnd.end;
+		}
 		//Move
 		if (data.x != null) {
 			id = "x";
