@@ -33,7 +33,7 @@ export default class {
 	 */
 	playSound(soundName)
 	{
-		this.controller.audio = Audio. soundName;
+		this.controller.audio = Audio.soundName;
 		this.speaker.audio = this.controller;
 		this.controller.play();
 	}
