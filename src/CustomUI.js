@@ -1,7 +1,18 @@
+import console from 'Diagnostics';
+import Scene from 'Scene';
+import Time from 'Time';
+
 export default {
 
 	UIToWorldSpace(worldObject, UIObject, canvas, onlyDefaultPosition) {
-			if(onlyDefaultPosition) {
+		var widthSizer = Scene.root.find("widthSizer").bounds.width;
+		var xda = Scene.root.find("bubabbanguiceuwg");
+
+		widthSizer.monitor().subscribe(()=>{
+			xda.text = widthSizer.lastValue.toString();
+		});
+		
+		if(onlyDefaultPosition) {
 				worldObject.transform.x = UIObject.bounds.x.sub(canvas.width.lastValue/2).add(UIObject.bounds.width.div(2));
 				worldObject.transform.y = UIObject.bounds.y.sub(canvas.height.lastValue/2).add(UIObject.bounds.height.div(2)).mul(-1);
 			} else {
