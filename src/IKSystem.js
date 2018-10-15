@@ -3,7 +3,7 @@ import Reactive from 'Reactive';
 import console from 'Diagnostics';
 
 export default class {
-    constructor(bones,points) {
+    constructor(bones,points,keepEndRotation) {
         //SetPosition
         bones.begin.transform.position = points.begin.transform.position;
 
@@ -15,6 +15,13 @@ export default class {
         var calculationBone2 = Reactive.div(Reactive.add(Reactive.pow(this.boneLength_01,2),Reactive.pow(this.crossLength,2)).sub(Reactive.pow(this.boneLength_02,2)),Reactive.mul(this.boneLength_01, this.crossLength).mul(2));
         var calculationBone3 = Reactive.div(Reactive.add(Reactive.pow(this.boneLength_01,2),Reactive.pow(this.boneLength_02,2)).sub(Reactive.pow(this.crossLength,2)),Reactive.mul(this.boneLength_01, this.boneLength_02).mul(2));
         var calculateDefaultRotation = Reactive.atan2(Reactive.sub(points.end.transform.x, points.begin.transform.x), Reactive.sub(points.end.transform.y, points.begin.transform.y));
+
+        this.angle1 = Reactive.val(0);
+        this.angle2 = Reactive.val(0);
+
+        if(keepEndRotation) {
+            bones.target.transform.rotationZ = points.end.transform.rotationZ.sub(bones.begin.transform.rotationZ).sub(bones.middle.transform.rotationZ);
+        }
 
         Reactive.ge(calculationBone1,1).monitor({fireOnInitialValue:true}).subscribe((e)=>{
             if(e.newValue == true) {
