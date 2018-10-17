@@ -3,11 +3,19 @@ import Reactive from 'Reactive';
 import console from 'Diagnostics';
 
 export default class {
-    constructor(bones,points, keepEndRotation) {
+    constructor(bones,points, keepEndRotation, useDepthRotation) {
+        
+        
         if(keepEndRotation == null) {
             this.keepEndRotation = false;
         } else {
             this.keepEndRotation = keepEndRotation;
+        }
+
+        if(useDepthRotation == null) {
+            this.useDepthRotation = false;
+        } else {
+            this.useDepthRotation = useDepthRotation;
         }
 
         this.bones = bones;
@@ -33,7 +41,12 @@ export default class {
         var firstCorner = Reactive.div(Reactive.add(Reactive.pow(this.armLength.div(2),2),Reactive.pow(this.crossLength,2)).sub(Reactive.pow(this.armLength.div(2),2)),Reactive.mul(this.armLength.div(2), this.crossLength).mul(2));
         var corner = Reactive.div(Reactive.add(Reactive.pow(this.armLength.div(2),2),Reactive.pow(this.crossLength,2)).sub(Reactive.pow(this.armLength.div(2),2)),Reactive.mul(this.armLength.div(2), this.crossLength).mul(2));
         var calculateDefaultRotation = Reactive.atan2(Reactive.sub(this.points.end.transform.x, this.points.begin.transform.x), Reactive.sub(this.points.end.transform.y, this.points.begin.transform.y));
-        
+
+        if(this.useDepthRotation) {
+            var depthRotation = Reactive.atan2(Reactive.sub(this.points.end.transform.y, this.points.begin.transform.y), Reactive.sub(this.points.end.transform.z, this.points.begin.transform.z));
+            this.bones.array[0].transform.rotationX = depthRotation.sub(this.degToRad(90));
+        }
+
         if(this.keepEndRotation) {
             this.bones.array[this.bones.array.length-1].transform.rotationZ = this.points.end.transform.rotationZ.sub(this.bones.array[0].transform.rotationZ).sub(this.bones.array[1].transform.rotationZ.mul(this.bones.array.length-2));
         }
@@ -126,6 +139,11 @@ export default class {
 
         if(this.keepEndRotation) {
             this.bones.target.transform.rotationZ = this.points.end.transform.rotationZ.sub(this.bones.begin.transform.rotationZ).sub(this.bones.middle.transform.rotationZ);
+        }
+
+        if(this.useDepthRotation) {
+            var depthRotation = Reactive.atan2(Reactive.sub(this.points.end.transform.y, this.points.begin.transform.y), Reactive.sub(this.points.end.transform.z, this.points.begin.transform.z));
+            this.bones.begin.transform.rotationX = depthRotation.sub(this.degToRad(90));
         }
 
         Reactive.ge(this.points.target.transform.x, this.points.begin.transform.x).monitor({fireOnInitialValue:true}).subscribe((e)=>{
