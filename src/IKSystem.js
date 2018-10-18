@@ -151,10 +151,8 @@ export default class {
                 //Target Right
                 Reactive.ge(calculationBone1,1).monitor({fireOnInitialValue:true}).subscribe((e)=>{
                     if(e.newValue == true) {
-                        // console.log("zero");
                         this.angle1 = Reactive.add(0, this.degToRad(90));
                     } else {
-                        // console.log("not zero");
                         this.angle1 = Reactive.add(this.degToRad(this.arccos(calculationBone1)), this.degToRad(90));
                     }
                     this.bones.begin.transform.rotationZ = Reactive.sub(this.degToRad(180), this.angle1.add(calculateDefaultRotation.mul(1)));
@@ -162,7 +160,7 @@ export default class {
 
                 Reactive.ge(calculationBone2,1).monitor({fireOnInitialValue:true}).subscribe((e)=>{
                     if(e.newValue == true) {               
-                        this.angle2 = 0;
+                        this.angle2 = Reactive.val(0);
                     } else {
                         this.angle2 = this.degToRad(this.arccos(calculationBone2)).mul(-2);
                     }
@@ -172,10 +170,8 @@ export default class {
                 //Target Left
                 Reactive.ge(calculationBone1,1).monitor({fireOnInitialValue:true}).subscribe((e)=>{
                     if(e.newValue == true) {
-                        // console.log("zero");
                         this.angle1 = Reactive.add(0, this.degToRad(90));
                     } else {
-                        // console.log("not zero");
                         this.angle1 = Reactive.add(this.degToRad(this.arccos(calculationBone1)), this.degToRad(90));
                     }
                     this.bones.begin.transform.rotationZ = this.angle1.add(calculateDefaultRotation.mul(-1));
@@ -183,7 +179,7 @@ export default class {
 
                 Reactive.ge(calculationBone2,1).monitor({fireOnInitialValue:true}).subscribe((e)=>{
                     if(e.newValue == true) {               
-                        this.angle2 = 0;
+                        this.angle2 = Reactive.val(0);
                     } else {
                         this.angle2 = this.degToRad(this.arccos(calculationBone2)).mul(-2);
                     }
