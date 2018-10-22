@@ -521,6 +521,7 @@ export default class {
 			}
 		}.bind(this));
 		AnimationDriver.onAfterIteration().subscribe(onIteration);
+		AnimationDriver.onStart().subscribe(onStart);
 
 		this.animations.push({ id: id, signal: signal, duration: duration, delay: delay, driver: AnimationDriver, onStart: onStart });
 	}
