@@ -5,7 +5,7 @@ It is also recommended to include the Ease file is you want to use different eas
 
 ```javascript
 import ARrrrTween from '[PATH]/FARLib/src/ARrrrTween';
-import Ease from '[PATH]FARLib/src/Ease';
+import Ease from '[PATH]/FARLib/src/Ease';
 ```
 
 ### Code Examples
@@ -75,7 +75,7 @@ ease | *Type: string, Ease - Default: "easeInOutCubic"* <br> Sets the ease of th
 delay <br> *(in milliseconds)* | *Type: float, default: 0* <br> Waits for delay to start tween
 onComplete | *Type: function* <br> Executes function after tween is done.
 onIteration | *Type: function* <br> Executes function after each loop.
-onStart | *Type: function* <br> Executes function after each loop.
+onStart | *Type: function* <br> Executes function in the beginning each loop.
 
 ### Methods
 Methods can be used on the end of a tween (example 6).
@@ -84,7 +84,7 @@ Methods | description
 ---|---
 onComplete | *Parameters: function* <br> Executes function after all tweens in the object are completed.
 start | Starts/resumes the tween.
-stop | Pauses the tween.
+pause | Pauses the tween.
 
 
 
