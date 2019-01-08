@@ -11,23 +11,23 @@ export default class {
 			Diagnostics.log("Done!");
 		});
 	 */
-    constructor(object, values, autoplay) {
+	constructor(object, values, autoplay) {
 		//#region enums
 		//TweenStates Enum
 		this.TweenState = {
-			get Loading (){
+			get Loading() {
 				return "loading";
 			},
-			get Loaded () {
+			get Loaded() {
 				return "loaded";
 			},
-			get Playing () {
+			get Playing() {
 				return "playing";
 			},
-			get Paused () {
+			get Paused() {
 				return "paused";
 			},
-			get Finished () {
+			get Finished() {
 				return "finished";
 			}
 		}
@@ -35,22 +35,22 @@ export default class {
 
 		//#region fields
 		//Set by the user
-        this.object = object;
-        this.values = values;
-        this.autoplay = (autoplay == null)?true:autoplay;
+		this.object = object;
+		this.values = values;
+		this.autoplay = (autoplay == null) ? true : autoplay;
 		this.onCompleteCallback;
-		
+
 		this.objectType;
-		
+
 		this.tweenData = {
-			isFirstStart : true,
-			isStarted : false,
-			isPaused : false,
-			currentState : this.TweenState.Loading
+			isFirstStart: true,
+			isStarted: false,
+			isPaused: false,
+			currentState: this.TweenState.Loading
 		}
 
-        //Get the offsets of the object, so the tween starts from the current position (if there is no {from:,to:})
-        this.offset = {
+		//Get the offsets of the object, so the tween starts from the current position (if there is no {from:,to:})
+		this.offset = {
 			transform: {
 				x: 0,
 				y: 0,
@@ -64,39 +64,39 @@ export default class {
 			},
 			material: {
 				opacity: 1
-            }, signal: {
-                value: 0
-            }
+			}, signal: {
+				value: 0
+			}
 		}
 
-        //if the user does NOT set these values, fall back to the default values 
-        this.defaultControls = {
+		//if the user does NOT set these values, fall back to the default values 
+		this.defaultControls = {
 			duration: 500,
 			loopCount: 1,
 			mirror: false,
 			ease: "easeInOutCubic",
 			delay: 0,
 			autoplay: true,
-			onComplete: function(){},
-			onIteration: function(){},
-			onStart: function(){}
-        }
-        
-        this.animations = [];        
-        
+			onComplete: function () { },
+			onIteration: function () { },
+			onStart: function () { }
+		}
+
+		this.animations = [];
+
 		//#endregion
-		
+
 		//#region Public Methods
 		this.start = () => {
-			switch(this.tweenData.currentState) {
+			switch (this.tweenData.currentState) {
 				case this.TweenState.Loading:
-				this.tweenData.isStarted = true;
-				break;
+					this.tweenData.isStarted = true;
+					break;
 				case this.TweenState.Loaded:
 				case this.TweenState.Paused:
 					this.tweenData.currentState = this.TweenState.Playing;
-					
-					if(!this.tweenData.isFirstStart) {
+
+					if (!this.tweenData.isFirstStart) {
 						//Resume playing
 						this.animations.forEach(anim => {
 							anim.driver.start();
@@ -115,27 +115,27 @@ export default class {
 								longestDuration = anim.duration + anim.delay;
 								driver = anim.driver;
 							}
-			
+
 							//Start drivers (or start after delay)
-							if(anim.delay == 0) {
+							if (anim.delay == 0) {
 								anim.driver.start();
 								anim.onStart();
 							} else {
-								Time.setTimeout(function(){
+								Time.setTimeout(function () {
 									anim.driver.start();
 									anim.onStart();
-								},anim.delay);
+								}, anim.delay);
 							}
 						});
 
 						//if finished
 						if (driver != null) {
-							driver.onCompleted().subscribe(function(){
-								if(this.tweenData.currentState == this.TweenState.Playing) {
+							driver.onCompleted().subscribe(function () {
+								if (this.tweenData.currentState == this.TweenState.Playing) {
 									//Completed the tween
 									this.tweenData.currentState = this.TweenState.Finished;
 
-									if(this.onCompleteCallback && typeof this.onCompleteCallback == "function") {
+									if (this.onCompleteCallback && typeof this.onCompleteCallback == "function") {
 										this.onCompleteCallback();
 									}
 								}
@@ -149,7 +149,7 @@ export default class {
 				case this.TweenState.Playing:
 					break;
 				case this.TweenState.Finished:
-					
+
 					this.tweenData.currentState = this.TweenState.Loading;
 					this.animations = [];
 					this.tweenData.isFirstStart = true;
@@ -163,8 +163,8 @@ export default class {
 			return this;
 		}
 
-		this.pause = ()=>{
-			switch(this.tweenData.currentState) {
+		this.pause = () => {
+			switch (this.tweenData.currentState) {
 				case this.TweenState.Loading:
 					this.tweenData.isPaused = true;
 					break;
@@ -182,11 +182,11 @@ export default class {
 					return;
 					break;
 			}
-			
+
 			return this;
 		}
 
-		this.reset = ()=>{
+		this.reset = () => {
 			this.isPlaying = false;
 			this.started = false;
 			this.finished = false;
@@ -200,23 +200,23 @@ export default class {
 			return this;
 		}
 
-		this.onComplete = (callback)=>{
+		this.onComplete = (callback) => {
 			this.onCompleteCallback = callback;
-			
+
 			return this;
 		}
 
 		//#endregion
 
-        //#region Methods
-        var SetupTween = ()=> {
+		//#region Methods
+		var SetupTween = () => {
 			this.tweenData.currentState = this.TweenState.Loading;
 			this.objectType = GetType(this.object);
-            if(this.objectType == null) {
-                return;
-            }
-			
-            GetOffset(()=>{
+			if (this.objectType == null) {
+				return;
+			}
+
+			GetOffset(() => {
 				//Evaluate all values
 				if (Array.isArray(this.values)) {
 					this.values.forEach(value => {
@@ -229,89 +229,89 @@ export default class {
 				//Ready to start
 				this.tweenData.currentState = this.TweenState.Loaded;
 
-				if(this.autoplay || this.tweenData.isStarted) {
-					if(!this.tweenData.isPaused) {
+				if (this.autoplay || this.tweenData.isStarted) {
+					if (!this.tweenData.isPaused) {
 						this.start()
 					} else {
 						this.tweenData.currentState = this.TweenState.Paused;
 					}
 				}
 			});
-        }
+		}
 
-        var GetOffset = (callback)=> {
-            var objectOffsetValues;
-            
-            switch(this.objectType) {
-                case "SceneObject":
-                case "UIObject":
-                    objectOffsetValues = {
-                        x: this.object.transform.x,
-                        y: this.object.transform.y,
-                        z: this.object.transform.z,
-                        rotationX: this.object.transform.rotationX,
-                        rotationY: this.object.transform.rotationY,
-                        rotationZ: this.object.transform.rotationZ,
-                        scaleX: this.object.transform.scaleX,
-                        scaleY: this.object.transform.scaleY,
-                        scaleZ: this.object.transform.scaleZ,
-                        opacity: this.object.material.opacity
-                    }
+		var GetOffset = (callback) => {
+			var objectOffsetValues;
 
-                    var sub = this.object.transform.x.monitor({fireOnInitialValue:true}).subscribeWithSnapshot(objectOffsetValues,(e,x)=>{
-						sub.unsubscribe();
-                        objectOffsetValues = x;
+			switch (this.objectType) {
+				case "SceneObject":
+				case "UIObject":
+					objectOffsetValues = {
+						x: this.object.transform.x,
+						y: this.object.transform.y,
+						z: this.object.transform.z,
+						rotationX: this.object.transform.rotationX,
+						rotationY: this.object.transform.rotationY,
+						rotationZ: this.object.transform.rotationZ,
+						scaleX: this.object.transform.scaleX,
+						scaleY: this.object.transform.scaleY,
+						scaleZ: this.object.transform.scaleZ,
+						// opacity: this.object.material.opacity FIXME: LATERRRR!
+					}
 
-                        AssignOffset(objectOffsetValues, callback);
-                    });
-                    break;
-                case "Material":
-                    var objectOffsetValues = {
-                        opacity: this.object.opacity
-                    }
-
-                    var sub = this.object.opacity.monitor({fireOnInitialValue:true}).subscribeWithSnapshot(objectOffsetValues,(e,x)=>{
+					var sub = this.object.transform.x.monitor({ fireOnInitialValue: true }).subscribeWithSnapshot(objectOffsetValues, (e, x) => {
 						sub.unsubscribe();
 						objectOffsetValues = x;
-						
+
 						AssignOffset(objectOffsetValues, callback);
-                    });
-					
+					});
+					break;
+				case "Material":
+					var objectOffsetValues = {
+						opacity: this.object.opacity
+					}
 
-                    break;
-                case "Signal":
-                    objectOffsetValues = {
-                        value: this.object
-                    }
-
-                    var sub = this.object.monitor({fireOnInitialValue:true}).subscribeWithSnapshot(objectOffsetValues,(e,x)=>{
+					var sub = this.object.opacity.monitor({ fireOnInitialValue: true }).subscribeWithSnapshot(objectOffsetValues, (e, x) => {
 						sub.unsubscribe();
 						objectOffsetValues = x;
-						
-						AssignOffset(objectOffsetValues, callback);
-                    });
-                    break;
-            }
-        }
 
-        var AssignOffset = (objectOffsetValues, callback)=>{
-            Object.keys(this.offset).forEach((mainKey)=>{
-                Object.keys(this.offset[mainKey]).forEach((key)=>{
-                    if(objectOffsetValues[key] != null) {
+						AssignOffset(objectOffsetValues, callback);
+					});
+
+
+					break;
+				case "Signal":
+					objectOffsetValues = {
+						value: this.object
+					}
+
+					var sub = this.object.monitor({ fireOnInitialValue: true }).subscribeWithSnapshot(objectOffsetValues, (e, x) => {
+						sub.unsubscribe();
+						objectOffsetValues = x;
+
+						AssignOffset(objectOffsetValues, callback);
+					});
+					break;
+			}
+		}
+
+		var AssignOffset = (objectOffsetValues, callback) => {
+			Object.keys(this.offset).forEach((mainKey) => {
+				Object.keys(this.offset[mainKey]).forEach((key) => {
+					if (objectOffsetValues[key] != null) {
 						this.offset[mainKey][key] = objectOffsetValues[key];
-                    }
-                })
+					}
+				});
 			});
-			
+
 			callback();
 		}
 
-		var EvaluateValue = (data)=> {
+		var EvaluateValue = (data) => {
 			//Tween
 			var id = "";
 			var start = 0;
 			var end = 0;
-	
+
 			//Controls
 			var duration = this.defaultControls.duration;
 			var loopCount = this.defaultControls.loopCount;
@@ -321,13 +321,13 @@ export default class {
 			var onComplete = this.defaultControls.onComplete;
 			var onIteration = this.defaultControls.onIteration;
 			var onStart = this.defaultControls.onStart;
-	
+
 			var signal = Reactive.val(0);
-	
+
 			//Animatable
 
 			//Transform
-			if(this.objectType == "UIObject" || this.objectType == "SceneObject") {
+			if (this.objectType == "UIObject" || this.objectType == "SceneObject") {
 				//Move
 				if (data.x != null) {
 					id = "x";
@@ -337,7 +337,7 @@ export default class {
 				}
 				if (data.y != null) {
 					id = "y";
-		
+
 					var startEnd = ParseFromToData(data.y, this.offset.transform.y);
 					start = startEnd.start;
 					end = startEnd.end;
@@ -354,6 +354,7 @@ export default class {
 					var startEnd = ParseFromToData(data.rotationX, this.offset.transform.rotationX, true);
 					start = startEnd.start;
 					end = startEnd.end;
+
 				}
 				if (data.rotationY != null) {
 					id = "rotationY";
@@ -389,7 +390,7 @@ export default class {
 			}
 
 			//Value
-			if(this.objectType == "Signal") {
+			if (this.objectType == "Signal") {
 				if (data.value != null) {
 					id = "value";
 					var startEnd = ParseFromToData(data.value, 0);
@@ -399,7 +400,7 @@ export default class {
 			}
 
 			//Material
-			if(this.objectType == "Material") {
+			if (this.objectType == "Material") {
 				if (data.opacity != null) {
 					id = "opacity";
 					var startEnd = ParseFromToData(data.opacity, this.offset.material.opacity);
@@ -407,13 +408,13 @@ export default class {
 					end = startEnd.end;
 				}
 			}
-	
+
 			//Controls
 			//Duration
 			if (data.duration != null) {
 				duration = data.duration;
-	
-				if(duration <= 0) {
+
+				if (duration <= 0) {
 					duration = 1;
 				}
 			}
@@ -421,24 +422,24 @@ export default class {
 			if (data.loopCount != null) {
 				loopCount = data.loopCount;
 			}
-			if(data.loop != null) {
+			if (data.loop != null) {
 				loopCount = data.loop;
 			}
-			if(data.repeat != null) {
+			if (data.repeat != null) {
 				loopCount = data.repeat;
 			}
 			//Infinite Loop
-			if(loopCount == -1) {
+			if (loopCount == -1) {
 				loopCount = Infinity;
 			}
 			//Mirror
 			if (data.mirror != null) {
 				mirror = data.mirror;
 			}
-			if(data.yoyo != null) {
+			if (data.yoyo != null) {
 				mirror = data.yoyo;
 			}
-			if(data.pingpong != null) {
+			if (data.pingpong != null) {
 				mirror = data.pingpong;
 			}
 			//Ease
@@ -446,103 +447,131 @@ export default class {
 				ease = data.ease;
 			}
 			//Delay
-			if(data.delay != null) {
+			if (data.delay != null) {
 				delay = data.delay;
 			}
 			//OnComplete
-			if(data.onComplete != null) {
+			if (data.onComplete != null) {
 				onComplete = data.onComplete;
 			}
 			//OnIteration
-			if(data.onIteration != null) {
+			if (data.onIteration != null) {
 				onIteration = data.onIteration;
 			}
 			//OnStart
-			if(data.onStart != null) {
+			if (data.onStart != null) {
 				onStart = data.onStart;
 			}
-	
+
 			var AnimationDriver = Animation.timeDriver({ durationMilliseconds: duration, loopCount: loopCount, mirror: mirror });
 			var AnimationValue = Animation.samplers[ease](start, end);
 			var Animate = Animation.animate(AnimationDriver, AnimationValue);
-	
+
 			signal = Animate;
-	
-			AnimationDriver.onCompleted().subscribe(function(){
-				if(this.isPlaying) {
+
+			AnimationDriver.onCompleted().subscribe(function () {
+				if (this.isPlaying) {
 					onComplete();
 				}
 			}.bind(this));
 			AnimationDriver.onAfterIteration().subscribe(onIteration);
 			AnimationDriver.onAfterIteration().subscribe(onStart);
-			
+
 			this.animations.push({ id: id, signal: signal, duration: duration, delay: delay, driver: AnimationDriver, onStart: onStart });
 		}
 
-		var ParseFromToData = (data ,offset, isRotation)=> {
+		var ParseFromToData = (data, offset, isRotation) => {
 			var startEnd = {
 				start: 0,
 				end: 0
 			}
-	
-			if(isRotation) {
-				if(data.from != null && data.to != null) {
+
+			//Convert to radians
+			if (isRotation) {
+				if (data.from != null && data.to != null) {
 					//From
-					if(typeof(data.from) == "string") {
+					if (typeof (data.from) == "string") {
 						data.from = Number(data.from);
-						data.from = DegToRad(data.from);
+						data.from = DegToRad(data.from).toString();
 					} else {
 						data.from = DegToRad(data.from);
 					}
 					//To
-					if(typeof(data.to) == "string") {
+					if (typeof (data.to) == "string") {
 						data.to = Number(data.to);
-						data.to = DegToRad(data.to);
+						data.to = DegToRad(data.to).toString();
 					} else {
 						data.to = DegToRad(data.to);
 					}
 				} else {
-					if(typeof(data) == "string") {
+					if (typeof (data) == "string") {
 						data = Number(data);
-						data = DegToRad(data);
+						data = DegToRad(data).toString();
 					} else {
 						data = DegToRad(data);
 					}
 				}
 			}
-	
+
 			//FromTo
-			if(data.from != null && data.to != null) {
+			if (data.from != null && data.to != null) {
 				//From
-				if(typeof(data.from) == "string") {
+				if (typeof (data.from) == "string") {
 					data.from = Number(data.from);
 					startEnd.start = offset + data.from;
 				} else {
-					 startEnd.start = data.from;
+					startEnd.start = data.from;
 				}
 				//To
-				if(typeof(data.to) == "string") {
+				if (typeof (data.to) == "string") {
 					data.to = Number(data.to);
 					startEnd.end = offset + data.to;
 				} else {
-					 startEnd.end = data.to;
+					startEnd.end = data.to;
 				}
-			//To
+				//To
 			} else {
 				startEnd.start = offset;
-				if(typeof(data) == "string") {
+				if (typeof (data) == "string") {
 					data = Number(data);
 					startEnd.end = offset + data;
 				} else {
 					startEnd.end = data;
 				}
 			}
-	
+
+			//Convert back to degrees
+			if (isRotation) {
+				if (data.from != null && data.to != null) {
+					//From
+					if (typeof (data.from) == "string") {
+						data.from = Number(data.from);
+						data.from = RadToDeg(data.from).toString();
+					} else {
+						data.from = RadToDeg(data.from);
+					}
+					//To
+					if (typeof (data.to) == "string") {
+						data.to = Number(data.to);
+						data.to = RadToDeg(data.to).toString();
+					} else {
+						data.to = RadToDeg(data.to);
+					}
+				} else {
+					if (typeof (data) == "string") {
+						data = Number(data);
+						data = RadToDeg(data).toString();
+					} else {
+						data = RadToDeg(data);
+					}
+				}
+			}
+
 			return startEnd;
 		}
 
-		var AssignSignals = ()=> {
-			switch(this.objectType) {
+		var AssignSignals = () => {
+			switch (this.objectType) {
 				case "UIObject":
 					var x = Reactive.val(this.offset.transform.x);
 					var y = Reactive.val(this.offset.transform.y);
@@ -622,9 +651,9 @@ export default class {
 
 							var angle = 0;
 							var h = 0;
-							
+
 							h = this.object.bounds.width.div(2).mul(scaleX);
-							
+
 							angle = Reactive.atan2(this.object.bounds.width.div(2).mul(scaleX).mul(1), 0);
 
 							yRotationOffsetZ = Reactive.cos(animation.signal.sub(angle)).mul(h);
@@ -660,72 +689,72 @@ export default class {
 							zRotationOffsetY = Reactive.sin(animation.signal.sub(angle)).mul(h).add(this.object.bounds.height.div(2).mul(scaleY));
 							this.object.transform.rotationZ = animation.signal;
 						}
-						
+
 						//ScaleX
 						if (animation.id == "scaleX") {
 							useX = true;
 
-							xSizeOffset = this.object.bounds.width.div(2/this.offset.transform.scaleX).sub(this.object.bounds.width.div(2).mul(animation.signal));
+							xSizeOffset = this.object.bounds.width.div(2 / this.offset.transform.scaleX).sub(this.object.bounds.width.div(2).mul(animation.signal));
 							this.object.transform.scaleX = animation.signal;
 						}
 						//ScaleY
 						if (animation.id == "scaleY") {
 							useY = true;
 
-							ySizeOffset = this.object.bounds.height.div(2/this.offset.transform.scaleY).sub(this.object.bounds.height.div(2).mul(animation.signal));
+							ySizeOffset = this.object.bounds.height.div(2 / this.offset.transform.scaleY).sub(this.object.bounds.height.div(2).mul(animation.signal));
 							this.object.transform.scaleY = animation.signal;
 						}
 
 						//Opacity
-						if(animation.id == "opacity") {
+						if (animation.id == "opacity") {
 							this.object.material.opacity = animation.signal;
 						}
 					});
 
-					if(useX) {
+					if (useX) {
 						this.object.transform.x = x.add(xSizeOffset).add(zRotationOffsetX).add(yRotationOffsetX);
 					}
-					if(useY){
+					if (useY) {
 						this.object.transform.y = y.add(ySizeOffset).add(zRotationOffsetY).add(xRotationOffsetY);
 					}
-					if(useZ) {
+					if (useZ) {
 						this.object.transform.z = z.add(xRotationOffsetZ).add(yRotationOffsetZ);
 					}
 					break;
 				case "SceneObject":
 					this.animations.forEach(animation => {
 						//Position
-						if(animation.id == "x") {
+						if (animation.id == "x") {
 							this.object.transform.x = animation.signal;
 						}
-						if(animation.id == "y") {
+						if (animation.id == "y") {
 							this.object.transform.y = animation.signal;
 						}
-						if(animation.id == "z") {
+						if (animation.id == "z") {
 							this.object.transform.z = animation.signal;
 						}
 						//Rotation
-						if(animation.id == "rotationX") {
+						if (animation.id == "rotationX") {
 							this.object.transform.rotationX = animation.signal;
 						}
-						if(animation.id == "rotationY") {
+						if (animation.id == "rotationY") {
 							this.object.transform.rotationY = animation.signal;
 						}
-						if(animation.id == "rotationZ") {
+						if (animation.id == "rotationZ") {
 							this.object.transform.rotationZ = animation.signal;
 						}
 						//Scale
-						if(animation.id == "scaleX") {
+						if (animation.id == "scaleX") {
 							this.object.transform.scaleX = animation.signal;
 						}
-						if(animation.id == "scaleY") {
+						if (animation.id == "scaleY") {
 							this.object.transform.scaleY = animation.signal;
 						}
-						if(animation.id == "scaleZ") {
+						if (animation.id == "scaleZ") {
 							this.object.transform.scaleZ = animation.signal;
 						}
 						//Opacity
-						if(animation.id == "opacity") {
+						if (animation.id == "opacity") {
 							this.object.material.opacity = animation.signal;
 						}
 					});
@@ -733,7 +762,7 @@ export default class {
 				case "Material":
 					this.animations.forEach(animation => {
 						//Opacity
-						if(animation.id == "opacity") {
+						if (animation.id == "opacity") {
 							this.object.opacity = animation.signal;
 						}
 					});
@@ -748,46 +777,51 @@ export default class {
 					break;
 			}
 		}
-		
+
 		//Generic
 		//Gets type of the given object (Signal, UIObject, SceneObject, Material)
-        var GetType = (object)=> {
+		var GetType = (object) => {
 			var type = null;
-            if(object.transform != null) {
-                //Is an object (UI or Scene)
-                if(object.bounds != null) {
-                    //Is an UI Object
-                    type = "UIObject";
-                } else {
-                    //Is and Scene Object
-                    type = "SceneObject";
-                }
-            } else {
-                if(object.opacity != null) {
-                    type = "Material";
+			if (object.transform != null) {
+				//Is an object (UI or Scene)
+				if (object.bounds != null) {
+					//Is an UI Object
+					type = "UIObject";
+				} else {
+					//Is and Scene Object
+					type = "SceneObject";
+				}
+			} else {
+				if (object.opacity != null) {
+					type = "Material";
 				}
 				else {
-					if(typeof object == "function") {
+					if (typeof object == "function") {
 						type = "Signal";
 					}
 				}
-            }
-            if(type != null) {
-                return type;
-            } else {
+			}
+			if (type != null) {
+				return type;
+			} else {
 				console.log(`_error >> Object Type for tween is invalid`);
 				return null;
-            }
+			}
 		}
-		
+
 		//Conversion for deg to rad
-		var DegToRad = (deg)=> {
+		var DegToRad = (deg) => {
 			return (deg * Math.PI) / 180.0;
 		}
-        //#endregion
+		
+		//Conversion for rad to deg
+		var RadToDeg = (rad) => {
+			return rad * 180/Math.PI;
+		}
+		//#endregion
 
 		SetupTween();
-		
+
 		return this;
-    }
+	}
 }
