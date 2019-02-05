@@ -40,7 +40,7 @@ The settings can be
 settings | description
 --- | ---
 radius | Type: *float (between 0 and 180)* <br> Radius in which the object will be detected
-debug | Type: *bool* <br> If true, the cameraLookAt will search of an object called 'debugDrawer', this has to be of the type SpotLight. This object has to be positioned inside the camera, but outside of the focal distance at the position of (0,0,0) and rotation (0,0,0). This will than show you the radius of the cameraLookAt. *this is optional*
+debug | Type: *bool (optional)* <br> If true, the cameraLookAt will search of an object called 'debugDrawer', this has to be of the type SpotLight. This object has to be positioned inside the camera, but outside of the focal distance at the position of (0,0,0) and rotation (0,0,0). This will than show you the radius of the cameraLookAt. *this is optional*
 
 ### Methods
 
