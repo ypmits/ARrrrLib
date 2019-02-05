@@ -1,4 +1,4 @@
-# ARrrrTween
+# CameraLookAt
 ### Introduction
 CameraLookAt is a api for SparkAR Studio that checks if the user is looking at an object.
 This class will check if the pivot of sceneObjects is inside of the radius (so not the bounds)
