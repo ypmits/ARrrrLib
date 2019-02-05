@@ -32,9 +32,10 @@ console.watch("faceX",face.cameraTransform.x);
 ### Settings
 
 The settings are of the type "object".
+
 Settings | description
 --- | ---
-collapse | *Type: bool - Default: false* <br> If collapse is equal to true the console will collapse log items with the same value into a single entry with a count in front of it. <br><br> *Example:*<br>>> [3] consoleEntry<br>This means "consoleEntry" is logged three times
+collapse | *Type: bool - Default: false* <br> If collapse is equal to true the console will collapse log items with the same value into a single entry with a count in front of it. <br><br> *Example:*<br>>> [3] consoleEntry <br> This means "consoleEntry" is logged three times
 maxLines | *Type: int - Default: 5* <br> The maxLines setting are the amount of times shown inside of the text object. If the maxLines amount is bigger than what fits inside of the text field it will show "..." at the end of the last entry.
 keepLog | *Type: bool - Default: false* <br> When keepLog is equal to true all entries will be saved until the console is cleared. This allows to scroll back to check previous logged items.
 
