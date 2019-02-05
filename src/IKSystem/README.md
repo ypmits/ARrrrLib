@@ -53,8 +53,8 @@ new IKSystem(arrayOfBones, points, {keepEndRotation:true,useDepthRotation:true})
 
 ### Different IK Systems
 There are two ways to create a IK System with this system:
-- *Like example one:* With this example you can create a IK System with two bones, this is perfect for arms and legs.
-- *Like example two:* With this example you can create a IK System with an array of bones, this could be used for something like a tail.
+- *Like example one:* <br> With this example you can create a IK System with two bones, this is perfect for arms and legs.
+- *Like example two:* <br> With this example you can create a IK System with an array of bones, this could be used for something like a tail.
 
 *!!! For both ways it is very important that the bones are all the same length. !!!*
 
