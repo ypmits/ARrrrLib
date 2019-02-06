@@ -1,6 +1,6 @@
 # ARrrrTween
 ### Introduction
-ARrrrTween is a Tweening API for AR Studio. To start using ARrrrTween you first have to import it from FARlib.
+ARrrrTween is a Tweening API for Spark AR. To start using ARrrrTween you first have to import it from FARlib.
 It is also recommended to include the Ease file is you want to use different easings.
 
 ```javascript
