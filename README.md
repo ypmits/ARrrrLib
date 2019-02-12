@@ -1,5 +1,6 @@
-# ARrrrLib
-A collection of Spark AR utility libraries
+# Information about ARrrrLib
+*ARrrrLib* (try saying it like a pirate) is a collection of utility libraries for Facebook's AR platform **Spark AR**.
+The 'Pièce de Résistance' is a complete and feature-rich tweening-library. It has a similar syntax as Greensock's TweenLite library. ARrrrLib also contains a few other gems that make developing a Spark AR filter a lot easier.
 
 ## Setup
 When you're using FARLib as an external library for your own Studio AR project then make sure to copy the ```package.json``` and ```package-lock.json``` to the root of this library. This folder, although it's an external library will also need to have the node_modules installed to function. To install the ```node_modules``` you will have to run:
