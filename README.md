@@ -9,4 +9,4 @@ npm i
 ```
 The node_modules folder is ignored through the ```.gitignore``` which can be found in the root of FARLib.
 
-![alt text](https://github.com/ypmits/ARrrrLib/blob/develop/images/pirate.png?raw=true)
+![Arr! Said the pirate](https://github.com/ypmits/ARrrrLib/blob/develop/images/pirate.png?raw=true)
