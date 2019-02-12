@@ -1,7 +1,7 @@
 # IKSystem
 ### Introduction
 This is the documentation for a IKSystem API for SparkAR Studio. To start using the API you first have to import it from FARlib.<br>
-![alt text](https://github.com/ypmits/ARrrrLib/blob/develop/images/IK_structure.png?raw=true "An example of an IKSystem" =350x)
+![alt text](https://github.com/ypmits/ARrrrLib/blob/develop/images/IK_structure.png?raw=true)
 <br>
 ```javascript
 import IKSystem from '[PATH]/FARLib/src/IKSystem/IKSystem';
