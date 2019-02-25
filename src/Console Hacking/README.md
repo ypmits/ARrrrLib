@@ -34,3 +34,14 @@ Now the css-rule should look like this:
 	display: none;
 }
 ```
+### You want a custom Background?
+You can do whatever you want if you change the html tag. For instance, if you want a custom background that doesn't scroll with the content-text you can do the following
+![Custom background](https://github.com/ypmits/ARrrrLib/blob/develop/images/consoleHackingBack.png?raw=true)
+``` css
+html {
+	background-image: url("consoleHackingBack.png");
+	background-color: rgb(35, 71, 107); 
+	background-attachment: fixed;
+	background-position: center;
+}
+```
