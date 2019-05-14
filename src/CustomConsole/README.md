@@ -1,7 +1,7 @@
 # CustomConsole
 ### Introduction
 The Custom Console is a library to create a on screen console for debugging.
-This is the documentation for a Custom Console API for SparkAR Studio. To start using the API you first have to import it from FARlib.
+This is the documentation for a Custom Console API for Spark AR Studio. To start using the API you first have to import it from FARlib.
 
 You have to create the text field by yourself, its also possible to create buttons like in the example below to control the console. <br>
 ![alt text](https://github.com/ypmits/ARrrrLib/blob/develop/images/console_structure.png?raw=true)

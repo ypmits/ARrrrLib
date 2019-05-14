@@ -1,6 +1,6 @@
 # CameraLookAt
 ### Introduction
-CameraLookAt is a api for SparkAR Studio that checks if the user is looking at an object.
+CameraLookAt is a api for Spark AR Studio that checks if the user is looking at an object.
 This class will check if the pivot of sceneObjects is inside of the radius (so not the bounds)
 
 Before you can use it, you have to create a null object inside of the camera (but outside of the focal distance!).

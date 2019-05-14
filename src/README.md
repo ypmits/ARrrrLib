@@ -1,7 +1,7 @@
 # ARrrrLib
 ### Introduction
-ARrrrLib is a utility library for Spark AR developers.
-This library provides a lot of everyday functionality that Spark AR lacks
+ARrrrLib is a utility library for Spark AR Studio developers.
+This library provides a lot of everyday functionality that Spark AR Studio lacks
 
 Feature | Description
 --- | ---
@@ -16,3 +16,4 @@ DeviceInfo |
 Math2 | Handy math functions
 ObjectFinder | Find objects, or not and get some nice debug-logs
 SceneLoader | For easy scene-manager
+Patches | A collection of handy patches

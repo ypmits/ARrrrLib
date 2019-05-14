@@ -1,6 +1,6 @@
 # Console Hacking
 ## Introduction
-It is possible to change some of Spark AR's annoying 'features/bugs/midboggling crappy ideas that were shit but still implemented'. One of them is the shear amount of warning you'll get when you use a deprecated API. You can simply turn off every single warning in the console but it's also possible to
+It is possible to change some of Spark AR Studio's annoying 'features/bugs/midboggling crappy ideas that were shit but still implemented'. One of them is the shear amount of warning you'll get when you use a deprecated API. You can simply turn off every single warning in the console but it's also possible to
 
 ### Hiding specific warnings through javascript (Plan A)
 Go to the file ScriptingConsole.js
@@ -39,9 +39,9 @@ You can do whatever you want if you change the html tag. For instance, if you wa
 ![Custom background](https://github.com/ypmits/ARrrrLib/blob/develop/images/consoleHackingBack.png?raw=true)
 ``` css
 html {
-	background-image: url("consoleHackingBack.png");
-	background-color: rgb(35, 71, 107); 
-	background-attachment: fixed;
-	background-position: center;
+	background-image: url("consoleHackingBack.png"); // <---<<
+	background-color: rgb(35, 71, 107); // <----------------<< 
+	background-attachment: fixed ; // <----------------------<< Makes sure the image doesn't scroll
+	background-position: center; // <-----------------------<< This will center the image
 }
 ```

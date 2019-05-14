@@ -1,5 +1,5 @@
 # Information about ARrrrLib
-*ARrrrLib* (try saying it like a pirate) is a collection of utility libraries for Facebook's AR platform **Spark AR**.
+*ARrrrLib* (try saying it like a pirate) is a collection of utility libraries for Facebook's AR platform **Spark AR Studio**.
 The 'Pièce de Résistance' is a complete and feature-rich tweening-library. It has a similar syntax as Greensock's TweenLite library. ARrrrLib also contains a few other gems that make developing a Spark AR filter a lot easier.
 
 ## Setup
