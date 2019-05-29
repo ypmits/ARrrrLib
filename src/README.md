@@ -12,7 +12,7 @@ CameraLookAt | Make something happen by looking at a specific object in the scen
 CustomUI | A utility-class with some handy UI-functions
 EffectController | Controls effects
 AudioObject | For handling audio much easier
-DeviceInfo | 
+DeviceInfo | DeviceInfo provides some basic information about the device. It needs a reference to a canvas in Spark AR to do so.
 Math2 | Handy math functions
 ObjectFinder | Find objects, or not and get some nice debug-logs
 SceneLoader | For easy scene-manager
