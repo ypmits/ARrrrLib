@@ -1,7 +1,6 @@
 import Scene from 'Scene';
 import Animation from 'Animation';
 import console from './../Console';
-// import HttpRequestCode from './../HttpRequestCode';
 
 /**
  * NumPad is a container for an oldskool T9-like button-pad
