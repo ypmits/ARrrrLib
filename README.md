@@ -4,10 +4,10 @@ The 'Pièce de Résistance' of this library is a complete and feature-rich tween
 
 Feature | Description
 --- | ---
-[ARTween](../sr/ARTween) | A complete Tweening-library in the style of good old TweenLite
-[CustomConsole](../src/CustomConsole) | Add a visual console to your project to debug your projects without using a console
+[ARTween](src/ARTween) | A complete Tweening-library in the style of good old TweenLite
+[CustomConsole](src/CustomConsole) | Add a visual console to your project to debug your projects without using a console
 [IKSystem](src/IKSystem) | A flexible IK-system. Handy if you need your character to use a bicycle
-[CameraLookAt](src/CameraLookAt) | Make something happen by looking at a specific object in the scene
+[CameraLookAt](src/CameraLookat) | Make something happen by looking at a specific object in the scene
 [CustomUI](src/CustomUI) | A utility-class with some handy UI-functions
 [AudioObject](src/AudioObject) | For handling audio much easier
 [DeviceInfo](src/DeviceInfo) | DeviceInfo provides some basic information about the device. It needs a reference to a canvas in Spark AR to do so.
