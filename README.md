@@ -21,6 +21,6 @@ When you're using ARrrrLib as an external library for your own Studio AR project
 ```javascript
 npm i
 ```
-The node_modules folder is ignored through the ```.gitignore``` which can be found in the root of ARrrrLib.
+The node_modules folder is ignored through the ```[.gitignore](.gitignore)``` which can be found in the root of ARrrrLib.
 
 ![Arr! Said the pirate](https://github.com/ypmits/ARrrrLib/blob/develop/images/pirate.png?raw=true)
