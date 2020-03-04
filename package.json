@@ -1,24 +1,26 @@
 {
-	"name": "[newly named project here]",
-	"version": "0.0.1",
-	"description": "https://wiki.mediamonks.net/Category:Development_Convention",
-	"main": "index.js",
-	"scripts": {
-		"dev": "webpack --config ./tools/webpack/webpack.dev.config.js",
-		"build": "webpack --config ./tools/webpack/webpack.prod.config.js",
-		"test": "echo \"Error: no test specified\" && exit 1"
-	},
-	"repository": {
-		"type": "git",
-		"url": "git@mediamonks-git.assembla.com:mediamonks/unilever-signal-facebook-ar-pitch.git"
-	},
-	"author": "Dave Lenz <dave.lenz@mediamonks.com>",
-	"license": "ISC",
-	"devDependencies": {
-		"babel-core": "^6.26.3",
-		"babel-loader": "^7.1.5",
-		"babel-preset-env": "^1.7.0",
-		"webpack": "^4.16.5",
-		"webpack-cli": "^3.1.0"
-	}
+  "name": "socialarlib",
+  "version": "1.0.0",
+  "description": "A collection of utility libraries for Facebook's AR platform",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ypmits/ARrrrLib.git"
+  },
+  "keywords": [
+    "sparkar",
+    "ar",
+    "facebook",
+    "utility",
+    "utilities"
+  ],
+  "author": "Dave Lenz <ypmits@gmail.com> (https://www.ypmits.nl)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ypmits/ARrrrLib/issues"
+  },
+  "homepage": "https://github.com/ypmits/ARrrrLib#readme"
 }
