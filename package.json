@@ -1,6 +1,6 @@
 {
-	"name": "unilever-signal-facebook-ar-pitch",
-	"version": "1.0.0",
+	"name": "[newly named project here]",
+	"version": "0.0.1",
 	"description": "https://wiki.mediamonks.net/Category:Development_Convention",
 	"main": "index.js",
 	"scripts": {
@@ -15,8 +15,6 @@
 	"author": "Dave Lenz <dave.lenz@mediamonks.com>",
 	"license": "ISC",
 	"devDependencies": {
-		"@mediamonks/tawang": "^0.1.7",
-		"@mediamonks/webpack-variations": "^0.1.2",
 		"babel-core": "^6.26.3",
 		"babel-loader": "^7.1.5",
 		"babel-preset-env": "^1.7.0",
