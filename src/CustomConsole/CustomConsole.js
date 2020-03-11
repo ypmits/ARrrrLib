@@ -1,6 +1,6 @@
 import Time from 'Time';
 
-export default class Console {
+class Console {
     
     constructor(textfield, options) {
         
@@ -200,3 +200,5 @@ export default class Console {
         //#endregion
     }
 }
+
+module.exports = { Console }
