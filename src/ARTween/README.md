@@ -1,40 +1,38 @@
 # ARrrrTween
 ### Introduction
-ARrrrTween is a Tweening API for Spark AR Studio. To start using ARrrrTween you first have to import it from FARlib.
-It is also recommended to include the Ease file is you want to use different easings.
-
-```javascript
-import ARrrrTween from '[PATH]/FARLib/src/ARrrrTween';
-import Ease from '[PATH]/FARLib/src/Ease';
-```
+ARrrrTween is a Tweening API for Spark AR Studio. It was made with the API of GSAP in mind. To start using ARrrrTween you first have to import it from ARrrrlib.
 
 ### Code Examples
 You make a new tween like this:
 ```javascript
+const ARTween = require("./ARTween").ARTween;
+const Delay = require("./ARTween").Delay;
+const Ease = require("./ARTween").Ease;
+
 //Syntax
-new ARrrrTween(object, values, autoplay);
+new ARTween(object, values, autoplay);
 
 //Example 1: default usage
-new ARrrrTween(object, {x: 100, duration: 1000}, true);
+new ARTween(object, {x: 100, duration: 1000}, true);
 
 //Example 2: array of values
-new ARrrrTween(object, [{x: 100, duration: 1000},{y: 100, duration: 1000}];
+new ARTween(object, [{x: 100, duration: 1000},{y: 100, duration: 1000}];
 
 //Example 3: To relative position
-new ARrrrTween(object, {x: "100", duration: 1000}, true);
+new ARTween(object, {x: "100", duration: 1000}, true);
 
 //Example 4: from, to position
-new ARrrrTween(object, {x: {from: -200, to: "100"}, duration: 1000});
+new ARTween(object, {x: {from: -200, to: "100"}, duration: 1000});
 
 //Example 5: callbacks
-new ARrrrTween(object, {x: 100, duration: 1000, onStart:function(){
-/*Executes when x starts tweening*/
-}, onComplete: function() {
-/*Executes when x is done with the tween*/
+new ARTween(object, {x: 100, duration: 1000, onStart:() => {
+   /*Executes when x starts tweening*/
+}, onComplete: () => {
+   /*Executes when x is done with the tween*/
 }});
 
 //Example 6: methods
-var tween = new ARrrrTween(object, [{x: 100, duration: 1000},{y: 100, duration: 1000}],false).onComplete(function(){
+var tween = new ARTween(object, [{x: 100, duration: 1000},{y: 100, duration: 1000}],false).onComplete(function(){
    //When all tweens are completed
 });
 tween.start();

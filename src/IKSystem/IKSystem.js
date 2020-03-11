@@ -2,10 +2,8 @@ import Scene from 'Scene';
 import Reactive from 'Reactive';
 import console from 'Diagnostics';
 
-export default class {
+class IKSystem {
     constructor(bones,points, keepEndRotation, useDepthRotation) {
-        
-        
         if(keepEndRotation == null) {
             this.keepEndRotation = false;
         } else {
@@ -21,15 +19,11 @@ export default class {
         this.bones = bones;
         this.points = points;
 
-        //SetPosition
-        
         if(this.bones.array != null) {
             this.arrayOfBones();
         } else {
             this.TwoEqualBones();
         }
-
-        // this.debug();
     }
 
     arrayOfBones() {
@@ -211,3 +205,5 @@ export default class {
         });
     }
 }
+
+module.exports = { IKSystem }
