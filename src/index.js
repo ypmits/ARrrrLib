@@ -4,6 +4,6 @@ import Delay from './ARTween/Delay';
 import Math2 from './Math2/Math2';
 
 export default {
-  Tweener, Ease, Delay
+  Tweener, Ease, Delay,
   Math2,
 };
