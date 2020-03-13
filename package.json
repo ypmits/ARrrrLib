@@ -1,26 +1,30 @@
 {
-  "name": "socialarlib",
-  "version": "1.0.6",
-  "description": "A collection of utility libraries for Facebook's AR platform",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/ypmits/ARrrrLib.git"
-  },
-  "keywords": [
-    "sparkar",
-    "ar",
-    "facebook",
-    "utility",
-    "utilities"
-  ],
-  "author": "Dave Lenz <ypmits@gmail.com> (https://www.ypmits.nl)",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/ypmits/ARrrrLib/issues"
-  },
-  "homepage": "https://github.com/ypmits/ARrrrLib#readme"
+	"name": "socialarlib",
+	"version": "1.0.6",
+	"description": "A collection of utility libraries for Facebook's AR platform",
+	"main": "index.js",
+	"scripts": {
+		"test": "rollup --config rollup.config.js"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/ypmits/ARrrrLib.git"
+	},
+	"keywords": [
+		"sparkar",
+		"ar",
+		"facebook",
+		"utility",
+		"utilities"
+	],
+	"author": "Dave Lenz <ypmits@gmail.com> (https://www.ypmits.nl)",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/ypmits/ARrrrLib/issues"
+	},
+	"homepage": "https://github.com/ypmits/ARrrrLib#readme",
+	"dependencies": {
+		"rollup": "^2.0.6",
+		"yo": "^3.1.1"
+	}
 }

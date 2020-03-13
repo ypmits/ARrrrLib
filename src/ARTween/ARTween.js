@@ -1,4 +1,3 @@
-const Scene = require('Scene');
 const Animation = require('Animation');
 const Reactive = require('Reactive');
 const Time = require('Time');

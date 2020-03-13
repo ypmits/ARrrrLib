@@ -1,3 +1,6 @@
+const Scene = require('Scene');
+import ARTween from './ARTween';
+import Ease from './Ease';
 
 export default class Delay {
 	constructor(delay, completeFunction) {

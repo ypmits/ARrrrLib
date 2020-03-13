@@ -1,7 +1,7 @@
 /**
  * Some math utilities
  */
-class Math2 {
+export default class Math2 {
 	static deg2rad (degrees)
 	{
 		return (degrees * Math.PI) / 180.0;
@@ -26,5 +26,3 @@ class Math2 {
 		return array;
 	}
 }
-
-module.exports = { Math2 }

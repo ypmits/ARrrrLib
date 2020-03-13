@@ -1,9 +1,22 @@
 import Time from 'Time';
 
-class Console {
-    
+/**
+ * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+ * The Custom Console is a utility to create a on-screen console for debugging-
+ * purposes. It does not draw the console on the screen, you have to do that in
+ * Spark-AR yourself. The Console needs a reference to the debugging-textfield.
+ * 
+ * This is the documentation for a Custom Console API for Spark AR Studio.
+ * To start using the API you first have to import it from FARlib.
+ * You have to create the text field by yourself, its also possible to create
+ * buttons like in the example below to control the console.
+ * 
+ * More info:
+ * https://github.com/ypmits/ARrrrLib/tree/develop/src/CustomConsole/README.md
+ * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+ */
+export default class Console {
     constructor(textfield, options) {
-        
         //#region Settings
         var collapse = (options != null && options.collapse != null)?options.collapse:false;
         var maxLines = (options != null && options.maxLines != null)?options.maxLines:5;
@@ -20,7 +33,7 @@ class Console {
         //#endregion
 
         //#region Public Methods
-        this.log = function(string) {            
+        this.log = function(string) {
             switch(typeof string) {
                 case "number":
                 case "string":
@@ -70,7 +83,7 @@ class Console {
             }
         }
 
-        this.watch = function(name,signal) {
+        this.watch = function(name, signal) {
             if(typeof signal == "function") {
                 try {
                     signal.pinLastValue();
@@ -200,5 +213,3 @@ class Console {
         //#endregion
     }
 }
-
-module.exports = { Console }
