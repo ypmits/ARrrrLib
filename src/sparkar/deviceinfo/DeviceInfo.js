@@ -2,7 +2,7 @@
  * DeviceInfo provides some basic information about the device,
  * it needs a reference to a canvas inside AR-Studio to do so.
  */
-export default class {
+export default class DeviceInfo {
 	/**
 	 * Create an info class.
 	 */
@@ -17,7 +17,7 @@ export default class {
 	 */
 	getScreenWidth()
 	{
-		return this.screenWidthSignal.lastValue;
+		return this.screenWidthSignal.pinLastValue();
 	}
 	/**
 	 * Get the screen height.
@@ -25,7 +25,7 @@ export default class {
 	 */
 	getScreenHeight()
 	{
-		return this.screenHeightSignal.lastValue;
+		return this.screenHeightSignal.pinLastValue();
 	}
 
 	test()

@@ -1,5 +1,5 @@
-import Scene from 'Scene';
-import Diagnostics from 'Diagnostics';
+const Scene = require('Scene');
+const Diagnostics = require('Diagnostics');
 
 export default class ObjectFinder {
     // ------------Example------------

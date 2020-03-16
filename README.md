@@ -1,10 +1,13 @@
-# Information about ARrrrLib
-*ARrrrLib* (try saying it like a pirate) is a collection of utility libraries for Facebook's AR platform **Spark AR Studio**.
-The *Pièce-de-Résistance* of this library is a complete and feature-rich tweening-library. It has a similar syntax as Greensock's GSAP library. ARrrrLib also contains a few other gems that make developing a Spark AR filter a lot easier.
+# SocialARLib
+*SocialARLib* is a collection of utility libraries for several Social Augmented Reality platforms, like Snapchat's [Lens Studio](https://lensstudio.snapchat.com/) and Facebook's [Spark AR](https://sparkar.facebook.com/ar-studio/) platform.
+The *[Pièce-de-Résistance](https://www.dictionary.com/browse/piece-de-resistance)* of this library is a complete and feature-rich tweening-library for Spark AR, with a syntax and API comparable to that of Greensock's GSAP platform.
 
-## What's inside ARrrrLib
+SocialARLib also contains a lot of other gems that make developing a Spark AR filter a lot easier.
+
+## What's inside SocialARLib
+SparkAR (Facebook / Instagram)
 Feature | Description
---- | ---
+:--- | :---
 [ARTween](src/ARTween) | A complete Tweening-library in the style of good old TweenLite
 [CustomConsole](src/CustomConsole) | Add a visual console to your scene so you can debug your projects on any device
 [IKSystem](src/IKSystem) | A flexible IK-system. Handy if you need your character to use a bicycle
@@ -17,12 +20,28 @@ Feature | Description
 [SceneLoader](src/SceneLoader) | For easy scene-manager
 [Patches](src/Patches) | A collection of ready-to-use patches
 
+Lens Studio (Snapchat)
+Feature | Description
+:--- | :---
+[...](src/ARTween) | A complete Tweening-library in the style of good old TweenLite
+
 ## Setup
+##### Some basic Spark-AR script information
+Spark-AR wants all scripts being used to sit in a folder called ***scripts***. It also wants all scripts that are being used in your project (even if they're referenced or imported in other scripts) to be added inside Spark-AR.
+
+##### SocialARLib.js
+For this library we are gonna output a script called ***socialarlib.js***. This will contain all the necessary library-functions you need.
+
 When you want to use ARrrrLib as an external library for your own (or a new) Studio AR project then follow the following procedure:
 -  make sure to copy the [package-lock.json](```package-lock.json```) and [package.json](```package.json```) to the root of your project. This folder, although it's an external library will also need to have the node_modules installed to function. To install the ```node_modules``` you will have to run:
 ```javascript
 npm i
 ```
-The node_modules folder is ignored through the [.gitignore](.gitignore) which can be found in the root of ARrrrLib.
+## Spark AR
+When we look at the scripts-folder
+After installing all the necessary node_modules we need to build the ***socialarlib.js*** file and fill it with all the classes of the library.
+
+**P.S.**
+The node_modules folder is ignored through the [.gitignore](.gitignore), which can be found in the root of ARrrrLib.
 
 ![Arr! Said the pirate](https://github.com/ypmits/ARrrrLib/blob/develop/images/pirate.png?raw=true)

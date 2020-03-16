@@ -41,49 +41,45 @@ new Delay(1000, () =>
 		{ scaleZ: 0, duration: 2000, loop: -1, yoyo: true, ease: Ease.InOutQuad() }
 	]).onComplete(function ()
 	{
-		console.log("Done!" + Ease.InBack());
+		console.log("Facemesh done animation (ARTween check!)");
 	});
-	customConsole = new CustomConsole(Scene.root.find("consoleTextfield"));
 });
+
+customConsole = new CustomConsole(Scene.root.find("CustomConsoleBackground"), Scene.root.find("consoleTextfield"), 16, {collapse:true, maxLines:7, resizeText:true});
+customConsole.addButton(Scene.root.find("ClearButton"), customConsole.clear);
+customConsole.addButton(Scene.root.find("ToTopButton"), customConsole.scrollToTop);
+customConsole.addButton(Scene.root.find("UpButton"), customConsole.scrollUp);
+customConsole.addButton(Scene.root.find("DownButton"), customConsole.scrollDown);
+customConsole.addButton(Scene.root.find("ToBottomButton"), customConsole.scrollToBottom);
 
 
 // Boolean:
 var faceID = 0;
 var useEyebrowsFrowned = false;
-var useEyebrowsRaised = true;
+var useEyebrowsRaised = false;
 var useLeftEyeClosed = false;
 var useRightEyeClosed = false;
-var useMouthOpen = true;
+var useMouthOpen = false;
 // Eventsource:
-var useSmile = false;
-var useSurprised = false;
-var useShake = false;
-var useNod = false;
-var useBlink = false;
-
-
-
-
-
-
-
-
-
+var useSmile = true;
+var useSurprised = true;
+var useShake = true;
+var useNod = true;
+var useBlink = true;
 
 
 // Boolean:
-var eyebrowsfrowned = new FaceG.EyebrowsFrowned(faceID, () => console.log("Eyebrows Frowned! Yay!"), () => console.log("Eyebrows not Frowned any more :("));
-var eyebrowsraised = new FaceG.EyebrowsRaised(faceID, () => console.log("Eyebrows Raised! Yay!"), () => console.log("Eyebrows not Raised any more :("));
-var lefteyeclosed = new FaceG.LeftEyeClosed(faceID, () => console.log("Left eye closed"), () => console.log("Left eye open!"));
-var righteyeclosed = new FaceG.RightEyeClosed(faceID, () => console.log("Right eye closed"), () => console.log("Right eye open!"));
-var mouthopen = new FaceG.MouthOpen(faceID, () => console.log("Mouth opened!"), () => console.log("Mouth closed!"));
+var eyebrowsfrowned = new FaceG.EyebrowsFrowned(faceID, () => customConsole.log("Eyebrows Frowned! Yay!"), () => customConsole.log("Eyebrows not Frowned any more :("));
+var eyebrowsraised = new FaceG.EyebrowsRaised(faceID, () => customConsole.log("Eyebrows Raised! Yay!"), () => customConsole.log("Eyebrows not Raised any more :("));
+var lefteyeclosed = new FaceG.LeftEyeClosed(faceID, () => customConsole.log("Left eye closed"), () => customConsole.log("Left eye open!"));
+var righteyeclosed = new FaceG.RightEyeClosed(faceID, () => customConsole.log("Right eye closed"), () => customConsole.log("Right eye open!"));
+var mouthopen = new FaceG.MouthOpen(faceID, () => customConsole.log("Mouth opened!"), () => customConsole.log("Mouth closed!"));
 // Eventsource:
-var smiling = new FaceG.Smile(faceID, () => console.log("Start smiling! :)"), () => console.log("STOP smiling! :("));
-var surprised = new FaceG.Surprised(faceID, () => console.log("Surprised!"), () => console.log("Not surprised."));
-var shake = new FaceG.Shake(faceID, () => console.log("Shaking head!"));
-var nod = new FaceG.Nod(faceID, () => console.log("Nod head!"));
-var blink = new FaceG.Blink(faceID, () => console.log("Blink!"));
-
+var smiling = new FaceG.Smile(faceID, () => customConsole.log("Start smiling! :)"), () => customConsole.log("STOP smiling! :("));
+var surprised = new FaceG.Surprised(faceID, () => customConsole.log("Surprised!"), () => customConsole.log("Not surprised."));
+var shake = new FaceG.Shake(faceID, () => customConsole.log("Shaking head!"));
+var nod = new FaceG.Nod(faceID, () => customConsole.log("Nod head!"));
+var blink = new FaceG.Blink(faceID, () => customConsole.log("Blink!"));
 
 
 if (useEyebrowsFrowned) eyebrowsfrowned.start();

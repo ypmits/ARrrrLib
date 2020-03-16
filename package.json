@@ -4,7 +4,8 @@
 	"description": "A collection of utility libraries for Facebook's AR platform",
 	"main": "index.js",
 	"scripts": {
-		"test": "rollup --config rollup.config.js"
+		"test": "rollup --config rollup.config.js",
+		"dev": "yo socialarlib"
 	},
 	"repository": {
 		"type": "git",

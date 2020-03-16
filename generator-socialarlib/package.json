@@ -1,0 +1,14 @@
+{
+	"name": "generator-socialarlib",
+	"version": "0.1.0",
+	"description": "This will generate a library-file for your SparkAR or Lens Studio job",
+	"files": [
+		"generators"
+	],
+	"keywords": [
+		"yeoman-generator"
+	],
+	"dependencies": {
+		"yeoman-generator": "^1.0.0"
+	}
+}

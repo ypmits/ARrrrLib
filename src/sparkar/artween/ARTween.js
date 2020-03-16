@@ -1,3 +1,4 @@
+const Scene = require('Scene');
 const Animation = require('Animation');
 const Reactive = require('Reactive');
 const Time = require('Time');
@@ -130,18 +131,18 @@ export default class ARTween {
 	{
 		//Set offsets
 		if(this.object.transform != null) {
-			this.offset.transform.x = this.object.transform.x.lastValue;
-			this.offset.transform.y = this.object.transform.y.lastValue;
-			this.offset.transform.z = this.object.transform.z.lastValue;
-			this.offset.transform.rotationX = this.object.transform.rotationX.lastValue;
-			this.offset.transform.rotationY = this.object.transform.rotationY.lastValue;
-			this.offset.transform.rotationZ = this.object.transform.rotationZ.lastValue;
-			this.offset.transform.scaleX = this.object.transform.scaleX.lastValue;
-			this.offset.transform.scaleY = this.object.transform.scaleY.lastValue;
-			this.offset.transform.scaleZ = this.object.transform.scaleZ.lastValue;
+			this.offset.transform.x = this.object.transform.x.pinLastValue();
+			this.offset.transform.y = this.object.transform.y.pinLastValue();
+			this.offset.transform.z = this.object.transform.z.pinLastValue();
+			this.offset.transform.rotationX = this.object.transform.rotationX.pinLastValue();
+			this.offset.transform.rotationY = this.object.transform.rotationY.pinLastValue();
+			this.offset.transform.rotationZ = this.object.transform.rotationZ.pinLastValue();
+			this.offset.transform.scaleX = this.object.transform.scaleX.pinLastValue();
+			this.offset.transform.scaleY = this.object.transform.scaleY.pinLastValue();
+			this.offset.transform.scaleZ = this.object.transform.scaleZ.pinLastValue();
 			if(this.object.text == null) {
 				if(this.object.material != null) {
-					this.offset.material.opacity = this.object.material.opacity.lastValue;
+					this.offset.material.opacity = this.object.material.opacity.pinLastValue();
 				}
 			}
 		}

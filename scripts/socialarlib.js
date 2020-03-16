@@ -1,9 +1,6 @@
 'use strict';
 
-function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
-
-var Time$1 = _interopDefault(require('Time'));
-
+const Scene = require('Scene');
 const Animation = require('Animation');
 const Reactive = require('Reactive');
 const Time = require('Time');
@@ -136,18 +133,18 @@ class ARTween {
 	{
 		//Set offsets
 		if(this.object.transform != null) {
-			this.offset.transform.x = this.object.transform.x.lastValue;
-			this.offset.transform.y = this.object.transform.y.lastValue;
-			this.offset.transform.z = this.object.transform.z.lastValue;
-			this.offset.transform.rotationX = this.object.transform.rotationX.lastValue;
-			this.offset.transform.rotationY = this.object.transform.rotationY.lastValue;
-			this.offset.transform.rotationZ = this.object.transform.rotationZ.lastValue;
-			this.offset.transform.scaleX = this.object.transform.scaleX.lastValue;
-			this.offset.transform.scaleY = this.object.transform.scaleY.lastValue;
-			this.offset.transform.scaleZ = this.object.transform.scaleZ.lastValue;
+			this.offset.transform.x = this.object.transform.x.pinLastValue();
+			this.offset.transform.y = this.object.transform.y.pinLastValue();
+			this.offset.transform.z = this.object.transform.z.pinLastValue();
+			this.offset.transform.rotationX = this.object.transform.rotationX.pinLastValue();
+			this.offset.transform.rotationY = this.object.transform.rotationY.pinLastValue();
+			this.offset.transform.rotationZ = this.object.transform.rotationZ.pinLastValue();
+			this.offset.transform.scaleX = this.object.transform.scaleX.pinLastValue();
+			this.offset.transform.scaleY = this.object.transform.scaleY.pinLastValue();
+			this.offset.transform.scaleZ = this.object.transform.scaleZ.pinLastValue();
 			if(this.object.text == null) {
 				if(this.object.material != null) {
-					this.offset.material.opacity = this.object.material.opacity.lastValue;
+					this.offset.material.opacity = this.object.material.opacity.pinLastValue();
 				}
 			}
 		}
@@ -694,11 +691,11 @@ class Ease
 	static Linear() { return "linear"; }
 }
 
-const Scene = require('Scene');
+const Scene$1 = require('Scene');
 
 class Delay {
 	constructor(delay, completeFunction) {
-		var t = new ARTween(Scene.root,[{alpha:1, duration:delay, ease:Ease.Linear()}], true).onComplete(()=>{completeFunction();});
+		var t = new ARTween(Scene$1.root,[{alpha:1, duration:delay, ease:Ease.Linear()}], true).onComplete(()=>{completeFunction();});
 	}
 }
 
@@ -943,9 +940,49 @@ var ARFaceGestures = {
 	Blink
 };
 
+const Scene$2 = require('Scene');
+const Diagnostics = require('Diagnostics');
+
+class ObjectFinder {
+    // ------------Example------------
+    // var object = ObjectFinder.find("objectToFind"); // Find a object in the Scene.root
+    // var object = ObjectFinder.find("childObjectToFind",object); // Use a SceneObject to indicate the parent object (recommended)
+    // var object = ObjectFinder.find("childObjectToFind","objectToFind"); // Use a string to indicate the parent object
+    // --------------End--------------
+    static find(object, inside = null) {
+        if(object == null) {
+            Diagnostics.log("[error] no object name given");
+        } else if (typeof object != "string") {
+            Diagnostics.log("[error] object type has to be a string");
+        } else {
+            try {
+                if(inside == null) {
+                    return Scene$2.root.find(object);
+                } else {
+                    if(typeof inside == "string") {
+                        return Scene$2.root.find(inside).find(object);
+                    } else {
+                        return inside.find(object);
+                    }
+                }
+            } catch(e) {
+                if(inside == null) {
+                    Diagnostics.log(`[error] could not find "${object}" in the scene`);
+                } else {
+                    Diagnostics.log(`[error] could not find "${object}" in ${(typeof inside == "string")?inside:inside.name}`);
+                }
+            }
+        }
+    }
+}
+
+const Time$1 = require('Time');
+const console = require('Diagnostics');
+const TouchGestures = require('TouchGestures');
+
 /**
  * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
- * The Custom Console is a utility to create a on-screen console for debugging-
+ * The Custom Console is a utility to create an on-screen console for debugging-
  * purposes. It does not draw the console on the screen, you have to do that in
  * Spark-AR yourself. The Console needs a reference to the debugging-textfield.
  * 
@@ -954,209 +991,282 @@ var ARFaceGestures = {
  * You have to create the text field by yourself, its also possible to create
  * buttons like in the example below to control the console.
  * 
+ * P.S.
+ * Make sure you add 'TouchGestures' as a capability inside the properties-panel
+ * (which can be found in the menu: Project/Edit Properties.../Capabilities)
+ * 
  * More info:
  * https://github.com/ypmits/ARrrrLib/tree/develop/src/CustomConsole/README.md
  * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
  */
-class Console {
-    constructor(textfield, options) {
-        //#region Settings
-        var collapse = (options != null && options.collapse != null)?options.collapse:false;
-        var maxLines = (options != null && options.maxLines != null)?options.maxLines:5;
-        var keepLog = (options != null && options.keepLog != null)?options.keepLog:false;
-        //#endregion
+class CustomConsole
+{
+	constructor(background, textfield, fontSize, options)
+	{
+		//#region Settings
+		var collapse = (options != null && options.collapse != null) ? options.collapse : false;
+		var maxLines = (options != null && options.maxLines != null) ? options.maxLines : 5;
+		var keepLog = (options != null && options.keepLog != null) ? options.keepLog : false;
+		
+		//#endregion
+		
+		//#region Fields
+		var startAt = 0;
+		var scrollStartAt = 0;
+		var lines = [];
+		textfield.text = "";
 
-        //#region Fields
-        var startAt = 0;
-        var scrollStartAt;
-        var lines = [];
-        textfield.text = "";
+		var autoRefreshInterval;
+		if (options.resizeText) {
+			TouchGestures.onPinch(background).subscribe(e =>
+			{
+				const lastScaleX = textfield.transform.scale.x.pinLastValue();
+				const newScaleX = e.scale.mul(lastScaleX);
+				console.log("Pinch lastScale:"+lastScaleX+" newScale:"+newScaleX);
+				textfield.fontSize += 1;
+			});
+		}
+		//#endregion
 
-        var autoRefreshInterval;
-        //#endregion
+		//#region Public Methods
+		this.log = function (string)
+		{
+			switch (typeof string)
+			{
+				case "number":
+				case "string":
+				case "boolean":
+					if (collapse)
+					{
+						for (var i = 0; i < lines.length; i++)
+						{
+							if (lines[i].type == "logObject")
+							{
+								if (lines[i].string == string)
+								{
+									lines[i].addCount();
+									refreshConsole();
+									return;
+								}
+							}
+						}
+					}
+					var log = new logObject(string);
+					lines.push(log);
+					refreshConsole();
+					break;
+				case "object":
+					var log = new logObject("[object]");
+					lines.push(log);
+					refreshConsole();
+					break;
+				case "function":
+					try
+					{
+						string.pinLastValue();
+						var log = new logObject(string.pinLastValue());
+						lines.push(log);
+						refreshConsole();
+					} catch (err)
+					{
+						var log = new logObject("[function]");
+						lines.push(log);
+						refreshConsole();
+					}
+					break;
+				case "undefined":
+					var log = new logObject("[undefined]");
+					lines.push(log);
+					refreshConsole();
+					break;
+				default:
+					var log = new logObject("[type not found]");
+					lines.push(log);
+					refreshConsole();
+					break;
+			}
+		};
 
-        //#region Public Methods
-        this.log = function(string) {
-            switch(typeof string) {
-                case "number":
-                case "string":
-                case "boolean":
-                    if(collapse) {
-                        for(var i = 0; i < lines.length; i++) {
-                            if(lines[i].type == "logObject") {
-                                if(lines[i].string == string) {
-                                    lines[i].addCount();
-                                    refreshConsole();
-                                    return;
-                                }
-                            }
-                        }
-                    }
-                    var log = new logObject(string);
-                    lines.push(log);
-                    refreshConsole();
-                break;
-             case "object":
-                    var log = new logObject("[object]");
-                    lines.push(log);
-                    refreshConsole();
-                break;
-                case "function":
-                    try {
-                        string.pinLastValue();
-                        var log = new logObject(string.pinLastValue());
-                        lines.push(log);
-                        refreshConsole();
-                    } catch(err) {
-                        var log = new logObject("[function]");
-                        lines.push(log);
-                        refreshConsole();
-                    }
-                break;
-                case "undefined":
-                    var log = new logObject("[undefined]");
-                    lines.push(log);
-                    refreshConsole();
-                break;
-                default:
-                    var log = new logObject("[type not found]");
-                    lines.push(log);
-                    refreshConsole();
-                break;
-            }
-        };
+		this.watch = function (name, signal)
+		{
+			if (typeof signal == "function")
+			{
+				try
+				{
+					signal.pinLastValue();
+					var log = new signalObject(name, signal);
+					lines.push(log);
 
-        this.watch = function(name, signal) {
-            if(typeof signal == "function") {
-                try {
-                    signal.pinLastValue();
-                    var log = new signalObject(name,signal);
-                    lines.push(log);
+					refreshConsole();
 
-                    refreshConsole();
+					if (autoRefreshInterval == null)
+					{
+						autoRefreshInterval = Time$1.setInterval(() => { refreshConsole(); }, 100);
+					}
+				} catch (err)
+				{
+					var log = new logObject(name + ": [not a signal]");
+					lines.push(log);
+					refreshConsole();
+				}
 
-                    if(autoRefreshInterval == null) {
-                        autoRefreshInterval = Time$1.setInterval(()=>{refreshConsole();},100);
-                    }
-                } catch(err) {
-                    var log = new logObject(name + ": [not a signal]");
-                    lines.push(log);
-                    refreshConsole();
-                }
-                
-            } else {
-                var log = new logObject(name + ": [not a signal]");
-                lines.push(log);
-                refreshConsole();
-            }
-        };
+			} else
+			{
+				var log = new logObject(name + ": [not a signal]");
+				lines.push(log);
+				refreshConsole();
+			}
+		};
 
-        this.clear = function() {
-            scrollStartAt = null;
-            textfield.text = "";
-            lines = [];
-            startAt = 0;
-        };
+		this.clear = function ()
+		{
+			scrollStartAt = null;
+			textfield.text = "";
+			lines = [];
+			startAt = 0;
+		};
 
-        this.scrollToTop = function() {
-            scrollStartAt = 0;
-        };
+		this.scrollToTop = function ()
+		{
+			scrollStartAt = 0;
+		};
 
-        this.scrollUp = function() {
-            if(scrollStartAt != null) {
-                scrollStartAt--;
-            } else {
-                scrollStartAt = lines.length-maxLines-1;
-            }
-            if(scrollStartAt < 0) scrollStartAt = 0;
-        };
-        
-        this.scrollDown = function() {
-            if(scrollStartAt != null) {
-                scrollStartAt++;
-            } else {
-                scrollStartAt = lines.length-maxLines+1;
-            }
-            if(scrollStartAt > lines.length-maxLines) {
-                scrollStartAt = null;
-            }
-        };
-        
-        this.scrollToBottom = function() {
-            scrollStartAt = null;
-        };
-        //#endregion
+		this.scrollUp = function ()
+		{
+			if (scrollStartAt != null)
+			{
+				scrollStartAt--;
+			} else
+			{
+				scrollStartAt = lines.length - maxLines - 1;
+			}
+			if (scrollStartAt < 0) scrollStartAt = 0;
+		};
 
-        // #region Private Methods
-        var refreshConsole = function() {
-            if(!keepLog) {
-                while(lines.length > maxLines) {
-                    lines.shift();
-                }
-            } else {
-                if(lines.length < maxLines) {
-                    startAt = 0;
-                } else {
-                    startAt = lines.length-maxLines;
-                }
-                // if(startAt)
-            }
+		this.scrollDown = function ()
+		{
+			if (scrollStartAt != null)
+			{
+				scrollStartAt++;
+			} else
+			{
+				scrollStartAt = lines.length - maxLines + 1;
+			}
+			if (scrollStartAt > lines.length - maxLines)
+			{
+				scrollStartAt = null;
+			}
+		};
 
-            var newText = "";
+		this.scrollToBottom = function ()
+		{
+			scrollStartAt = null;
+		};
 
-            for(var i = (lines.length>maxLines)?maxLines-1:lines.length-1; i >= 0; i--) {
-                
-                var index = i + startAt;
-                if(scrollStartAt != null) {
-                    index = i + scrollStartAt;
-                }
+		/**
+		 * Adds a button that will connects to a function when tapped on
+		 */
+		this.addButton = (buttonObj, clickFunc) =>
+		{
+			if (buttonObj == null || clickFunc == null) return;
+			TouchGestures.onTap(buttonObj).subscribe(e =>
+			{
+				clickFunc();
+			});
+		};
+		//#endregion
 
-                if(lines[index].type == "logObject") {
-                    newText += ">>>"+((lines[index].count<=1)?"   ":"["+lines[index].count+"]")+" "+ lines[index].string + "\n";
-                } else if (lines[index].type = "signalObject"){
-                    newText += "<O>    " +lines[index].name+":"+ lines[index].signal.pinLastValue() + "\n";
-                }
-            }
-            textfield.text = newText;
+		// #region Private Methods
+		var refreshConsole = function ()
+		{
+			if (!keepLog)
+			{
+				while (lines.length > maxLines)
+				{
+					lines.shift();
+				}
+			} else
+			{
+				if (lines.length < maxLines)
+				{
+					startAt = 0;
+				} else
+				{
+					startAt = lines.length - maxLines;
+				}
+				// if(startAt)
+			}
 
-            var containsSignal = false;
-            for(var i = lines.length-1; i >= 0; i--) {
-                if(lines[i].type == "signalObject") {
-                    containsSignal = true;   
-                }
-            }
-            if(!containsSignal) {
-                if(autoRefreshInterval != null) {
-                    Time$1.clearInterval(autoRefreshInterval);
-                }
-            }
-        };
-        //#endregion
-        
-        //#region Classes
-        class logObject {
-            constructor(string) {
-                this.type = "logObject";
-                this.string = string;
-                this.count = 1;
-            }
+			var newText = "";
 
-            addCount() {
-                this.count++;
-            }
-        }
+			for (var i = (lines.length > maxLines) ? maxLines - 1 : lines.length - 1; i >= 0; i--)
+			{
 
-        class signalObject {
-            constructor(name,signal) {
-                this.type = "signalObject";
-                this.name = name;
-                this.signal = signal;
-            }
-        }
-        //#endregion
-    }
+				var index = i + startAt;
+				if (scrollStartAt != null)
+				{
+					index = i + scrollStartAt;
+				}
+
+				if (lines[index].type == "logObject")
+				{
+					newText += ">>>" + ((lines[index].count <= 1) ? "   " : "[" + lines[index].count + "]") + " " + lines[index].string + "\n";
+				} else if (lines[index].type = "signalObject")
+				{
+					newText += "<O>    " + lines[index].name + ":" + lines[index].signal.pinLastValue() + "\n";
+				}
+			}
+			textfield.text = newText;
+
+			var containsSignal = false;
+			for (var i = lines.length - 1; i >= 0; i--)
+			{
+				if (lines[i].type == "signalObject")
+				{
+					containsSignal = true;
+				}
+			}
+			if (!containsSignal)
+			{
+				if (autoRefreshInterval != null)
+				{
+					Time$1.clearInterval(autoRefreshInterval);
+				}
+			}
+		};
+		//#endregion
+
+		//#region Classes
+		class logObject
+		{
+			constructor(string)
+			{
+				this.type = "logObject";
+				this.string = string;
+				this.count = 1;
+			}
+
+			addCount()
+			{
+				this.count++;
+			}
+		}
+
+		class signalObject
+		{
+			constructor(name, signal)
+			{
+				this.type = "signalObject";
+				this.name = name;
+				this.signal = signal;
+			}
+		}
+		//#endregion
+	}
 }
 
+// Spark AR:
+
 module.exports = {
-	ARTween, Ease, Delay, Math2, ARFaceGestures, CustomConsole: Console
+	ARTween, Ease, Delay, Math2, ARFaceGestures, ObjectFinder, CustomConsole
 };
