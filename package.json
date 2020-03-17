@@ -4,8 +4,8 @@
 	"description": "A collection of utility libraries for Facebook's AR platform",
 	"main": "index.js",
 	"scripts": {
-		"test": "rollup --config rollup.config.js",
-		"dev": "yo socialarlib"
+		"dev": "yo socialarlib",
+		"test": "rollup --config rollup.config.js"
 	},
 	"repository": {
 		"type": "git",
@@ -19,7 +19,7 @@
 		"utilities"
 	],
 	"author": "Dave Lenz <ypmits@gmail.com> (https://www.ypmits.nl)",
-	"license": "ISC",
+	"license": "MIT",
 	"bugs": {
 		"url": "https://github.com/ypmits/ARrrrLib/issues"
 	},
