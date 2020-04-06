@@ -4,7 +4,7 @@ The Custom Console is a library to create a on screen console for debugging.
 This is the documentation for a Custom Console API for Spark AR. To start using the API you first have to import it from SocialARLib.
 
 You have to create the text field (and optional buttons) yourself, its also possible to create buttons like in the example below to control the console. <br>
-WARNING! Unfortunately Spark AR does not have a 'prefab' system that makes building the visuals of a CustomConsole easy, so it's all up to you to make that.
+WARNING! Unfortunately Spark AR does not have a 'prefab' system that makes building the visuals of a CustomConsole easy, so it's all up to the developer to make that.
 ![alt text](https://github.com/ypmits/ARrrrLib/blob/develop/images/console_structure.png?raw=true)
 
 
@@ -27,28 +27,20 @@ const CustomConsole = require("./socialarlib").CustomConsole;
  */
 
 Promise.all([Scene.root.findFirst("CustomConsoleBackground"), Scene.root.findFirst("consoleTextfield")]).then(values => {
-   var _console = new CustomConsole(values[0], values[1], 16, { collapse: true,    maxLines: 7, resizeText: true });
-   _console.addClearButtonPromise( Scene.root.findFirst("ClearButton") );
-   _console.addToTopButtonPromise( Scene.root.findFirst("ToTopButton") );
-   _console.addScrollUpButtonPromise( Scene.root.findFirst("UpButton") );
-   _console.addScrollDownButtonPromise( Scene.root.findFirst("DownButton"));
-   _console.addScrollToBottomButtonPromise( Scene.root.findFirst("ToBottomButton"));
+	// Once the background and textfield are loaded, build the console:
+ 	var customConsole = new CustomConsole(values[0], values[1], 16, { collapse: true, maxLines: 7, resizeText: true });
+	customConsole.addClearButton("ClearButton");
+	customConsole.addToTopButton("ToTopButton");
+	customConsole.addScrollUpButton("UpButton");
+	customConsole.addScrollDownButton("DownButton");
+	customConsole.addScrollToBottomButton("ToBottomButton");
+
+	// Add 'hello world' to the console:
+	customConsole.log("hello world");
+	
+	// Add a 'realtime' updating variable to the console:
+	ObjectFinder.find("faceMesh").then(fm => { customConsole.watch("faceX", fm.cameraTransform.x); })
 }, e => { console.log("Rejections: "+e)});
-
-
-
-var console = new CustomConsole(textObject, {
-   collapse:true, 
-   maxLines: 3,
-   keepLog: true
-});
-
-//Will add '>> hello world' to the console
-console.log("hello world");
-
-//Will add '<O> faceX: 0.434275532' to the console
-//The variable will update in realtime
-console.watch("faceX",face.cameraTransform.x);
 ```
 
 ### Settings

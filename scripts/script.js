@@ -57,21 +57,21 @@ ObjectFinder.findAll("IcoSphere", null, true).then(elements =>
 });
 
 // Testing the 'Tweening' and 'Delay':
-// ObjectFinder.find("faceMesh").then(fm =>
-// {
-// 	log(`faceMesh found (name:${fm.name})! Continueing...`);
-// 	fm.transform.scaleX = Reactive.val(2);
-// 	fm.transform.scaleZ = Reactive.val(2);
-// 	new Delay(1000, () =>
-// 	{
-// 		new ARTween(fm, [
-// 			{ rotationZ: 360, duration: 2000 },
-// 			{ scaleX: .6, duration: 2000, loop: -1, yoyo: true, ease: Ease.InOutQuad() },
-// 			{ scaleY: 3, duration: 2000, loop: -1, yoyo: true, ease: Ease.InOutQuad() },
-// 			{ scaleZ: 0, duration: 2000, loop: -1, yoyo: true, ease: Ease.InOutQuad() }
-// 		]).onComplete(() => { log("Facemesh done animation (ARTween check!)"); });
-// 	});
-// });
+ObjectFinder.find("faceMesh").then(fm =>
+{
+	log(`faceMesh found (name:${fm.name})! Continueing...`);
+	fm.transform.scaleX = Reactive.val(2);
+	fm.transform.scaleZ = Reactive.val(2);
+	new Delay(1000, () =>
+	{
+		new ARTween(fm, [
+			{ rotationZ: 360, duration: 2000 },
+			{ scaleX: .6, duration: 2000, loop: -1, yoyo: true, ease: Ease.InOutQuad() },
+			{ scaleY: 3, duration: 2000, loop: -1, yoyo: true, ease: Ease.InOutQuad() },
+			{ scaleZ: 0, duration: 2000, loop: -1, yoyo: true, ease: Ease.InOutQuad() }
+		]).onComplete(() => { log("Facemesh done animation (ARTween check!)"); });
+	});
+});
 
 // Testing the Custom-console:
 // var background_P = ;
@@ -91,7 +91,15 @@ Promise.all([ObjectFinder.find("CustomConsoleBackground"), ObjectFinder.find("co
 	customConsole.addScrollUpButton("UpButton");
 	customConsole.addScrollDownButton("DownButton");
 	customConsole.addScrollToBottomButton("ToBottomButton");
+	customConsole.log("hello world");
+	ObjectFinder.find("faceMesh").then(fm => { customConsole.watch("faceX", fm.cameraTransform.x); })
+	// customConsole.watch("faceX", face.cameraTransform.x);
 }, e => { console.log("Rejections: " + e) }); Scene.root.findFirst
+
+//Will add '>> hello world' to the console
+
+//Will add '<O> faceX: 0.434275532' to the console
+//The variable will update in realtime
 
 // Testing the CameraLookat:
 // new CameraLookAt({radius:10}).watch("IcoSphereHolder", e =>

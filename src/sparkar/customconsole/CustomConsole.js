@@ -115,8 +115,8 @@ export default class CustomConsole
 				try
 				{
 					signal.pinLastValue();
-					var log = new signalObject(name, signal);
-					lines.push(log);
+					var l = new signalObject(name, signal);
+					lines.push(l);
 
 					refreshConsole();
 
@@ -126,15 +126,15 @@ export default class CustomConsole
 					}
 				} catch (err)
 				{
-					var log = new logObject(name + ": [not a signal]");
-					lines.push(log);
+					var l = new logObject(name + ": [not a signal]");
+					lines.push(l);
 					refreshConsole();
 				}
 
 			} else
 			{
-				var log = new logObject(name + ": [not a signal]");
-				lines.push(log);
+				var l = new logObject(name + ": [not a signal]");
+				lines.push(l);
 				refreshConsole();
 			}
 		}
