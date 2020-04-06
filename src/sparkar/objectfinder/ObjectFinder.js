@@ -42,7 +42,7 @@ export default class ObjectFinder
 	{
 		if (objectNames == null)
 		{
-			Diagnostics.log("[error] no objectnames is given");
+			Diagnostics.log("[error] no objectnames are given");
 			return [];
 		} else
 		{

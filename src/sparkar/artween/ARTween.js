@@ -1,4 +1,3 @@
-const Scene = require('Scene');
 const Animation = require('Animation');
 const Reactive = require('Reactive');
 const Time = require('Time');
@@ -21,6 +20,8 @@ export default class ARTween {
 	constructor(object, values, autoplay) {
 		//Set values and controls
 		this.object = object;
+		this.material = null;
+		this.object.getMaterial().then(m=>{this.material = m;});
 		this.values = values;
 
 		this.isPlaying = false;
@@ -141,8 +142,8 @@ export default class ARTween {
 			this.offset.transform.scaleY = this.object.transform.scaleY.pinLastValue();
 			this.offset.transform.scaleZ = this.object.transform.scaleZ.pinLastValue();
 			if(this.object.text == null) {
-				if(this.object.material != null) {
-					this.offset.material.opacity = this.object.material.opacity.pinLastValue();
+				if(this.material != null) {
+					this.material.opacity = this.material.opacity.pinLastValue();
 				}
 			}
 		}
@@ -157,7 +158,6 @@ export default class ARTween {
 		}
 		
 		this.values.forEach(valuesElement => {
-
 			this.EvaluateData(valuesElement)
 		});
 		

@@ -5,7 +5,7 @@
 	"main": "index.js",
 	"scripts": {
 		"dev": "yo socialarlib",
-		"test": "rollup --config rollup.config.js"
+		"test": "rollup --config rollup.config.js | minify"
 	},
 	"repository": {
 		"type": "git",

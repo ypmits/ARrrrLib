@@ -14,43 +14,118 @@
  * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
  */
 
-
-const console = require('Diagnostics');
+const log = require('Diagnostics').log;
 const Scene = require('Scene');
 const Reactive = require("Reactive");
 
 const ARTween = require("./socialarlib").ARTween;
+const ObjectFinder = require("./socialarlib").ObjectFinder;
 const Delay = require("./socialarlib").Delay;
 const Ease = require("./socialarlib").Ease;
-const FaceG = require("./socialarlib").ARFaceGestures;
+const FaceGestures = require("./socialarlib").ARFaceGestures;
 const CustomConsole = require("./socialarlib").CustomConsole;
+const CameraLookAt = require("./socialarlib").CameraLookAt;
 const Math2 = require("./socialarlib").Math2;
 
-var facemesh = Scene.root.find("faceMesh");
-facemesh.transform.scaleX = Reactive.val(2);
-facemesh.transform.scaleZ = Reactive.val(2);
-var customConsole = null;
+// ObjectFinder:
+// var promise1 = ObjectFinder.find("IcoSphereHolder").then(element => {
+// 	log(`[ObjectFinder test:find] Found the element: ${element}`);
+// });
+// var promise2 = ObjectFinder.find("IcoSphereHolder0").then(element => {
+// 	log(`[ObjectFinder test:find] Found the element: ${element}`);
+// });
+// Promise.all([promise1, promise2]).then(v => {
+// 	log(`All are good: (num:${v.length})`);
+// });
 
-
-new Delay(1000, () =>
+ObjectFinder.find("IcoSphereHolder").then(el1 =>
 {
-	new ARTween(facemesh, [
-		{ rotationZ: 360, duration: 2000 },
-		{ scaleX: .6, duration: 2000, loop: -1, yoyo: true, ease: Ease.InOutQuad() },
-		{ scaleY: 3, duration: 2000, loop: -1, yoyo: true, ease: Ease.InOutQuad() },
-		{ scaleZ: 0, duration: 2000, loop: -1, yoyo: true, ease: Ease.InOutQuad() }
-	]).onComplete(function ()
+	ObjectFinder.find("IcoSphereHolder0").then(el2 =>
 	{
-		console.log("Facemesh done animation (ARTween check!)");
+		el1.transform.x = Reactive.mul(el2.transform.x, Reactive.val(1));
 	});
 });
 
-customConsole = new CustomConsole(Scene.root.find("CustomConsoleBackground"), Scene.root.find("consoleTextfield"), 16, {collapse:true, maxLines:7, resizeText:true});
-customConsole.addButton(Scene.root.find("ClearButton"), customConsole.clear);
-customConsole.addButton(Scene.root.find("ToTopButton"), customConsole.scrollToTop);
-customConsole.addButton(Scene.root.find("UpButton"), customConsole.scrollUp);
-customConsole.addButton(Scene.root.find("DownButton"), customConsole.scrollDown);
-customConsole.addButton(Scene.root.find("ToBottomButton"), customConsole.scrollToBottom);
+ObjectFinder.findAll("IcoSphere", null, true).then(elements =>
+{
+	// log(`[ObjectFinder test:findAll] Found ${elements.length}:`);
+	for (let i = 0; i < elements.length; i++)
+	{
+		const element = elements[i];
+		// log("    - sphere:"+element);
+	}
+});
+
+// Testing the 'Tweening' and 'Delay':
+// ObjectFinder.find("faceMesh").then(fm =>
+// {
+// 	log(`faceMesh found (name:${fm.name})! Continueing...`);
+// 	fm.transform.scaleX = Reactive.val(2);
+// 	fm.transform.scaleZ = Reactive.val(2);
+// 	new Delay(1000, () =>
+// 	{
+// 		new ARTween(fm, [
+// 			{ rotationZ: 360, duration: 2000 },
+// 			{ scaleX: .6, duration: 2000, loop: -1, yoyo: true, ease: Ease.InOutQuad() },
+// 			{ scaleY: 3, duration: 2000, loop: -1, yoyo: true, ease: Ease.InOutQuad() },
+// 			{ scaleZ: 0, duration: 2000, loop: -1, yoyo: true, ease: Ease.InOutQuad() }
+// 		]).onComplete(() => { log("Facemesh done animation (ARTween check!)"); });
+// 	});
+// });
+
+// Testing the Custom-console:
+// var background_P = ;
+// var textfield_P = ;
+// var button_clear_P = ObjectFinder.find("ClearButton");
+// var button_to_top_P = ObjectFinder.find("ToTopButton");
+// var button_up_P = ObjectFinder.find("UpButton");
+// var button_down_P = ObjectFinder.find("DownButton");
+// var button_to_bottom_P = ObjectFinder.find("ToBottomButton");
+// log(`background:${background_P}, clear:${button_clear_P}, toTop:${button_to_top_P}, up:${button_up_P}, down:${button_down_P}, toBottom:${button_to_bottom_P}`);
+
+var customConsole = undefined;
+Promise.all([ObjectFinder.find("CustomConsoleBackground"), ObjectFinder.find("consoleTextfield")]).then(values => {
+	customConsole = new CustomConsole(values[0], values[1], 16, { collapse: true, maxLines: 7, resizeText: true });
+	customConsole.addClearButtonPromise( ObjectFinder.find("ClearButton") );
+	customConsole.addToTopButtonPromise( ObjectFinder.find("ToTopButton") );
+	customConsole.addScrollUpButtonPromise( ObjectFinder.find("UpButton") );
+	customConsole.addScrollDownButtonPromise( ObjectFinder.find("DownButton"));
+	customConsole.addScrollToBottomButtonPromise( ObjectFinder.find("ToBottomButton"));
+}, e => { console.log("Rejections: "+e)});
+
+// Testing the CameraLookat:
+// new CameraLookAt({radius:10}).watch("IcoSphereHolder", e =>
+// {
+// 	customConsole.log("value: "+e.newValue);
+// });
+// new CameraLookAt().watch("IcoSphereHolder0", e =>
+// {
+// 	customConsole.log("value: "+e.newValue);
+// });
+// new CameraLookAt().watch("IcoSphereHolder1", e =>
+// {
+// 	customConsole.log("value: "+e.newValue);
+// });
+// new CameraLookAt().watch("IcoSphereHolder2", e =>
+// {
+// 	customConsole.log("value: "+e.newValue);
+// });
+
+// Scene.root.findFirst("").then(obj =>
+// {
+// 	let cameraLookAt = new CameraLookAt(10, true);
+// 	cameraLookAt.watch(obj).monitor({ fireOnInitialValue: true }).subscribe(e =>
+// 	{
+// 		if (e.newValue)
+// 		{
+// 			console.log("object inside radius");
+// 		} else
+// 		{
+// 			console.log("object outside radius");
+// 		}
+// 	});
+// });
+/**
 
 
 // Boolean:
@@ -92,7 +167,7 @@ if (useSurprised) surprised.start();
 if (useShake) shake.start();
 if (useNod) nod.start();
 if (useBlink) blink.start();
-
+*/
 
 
 

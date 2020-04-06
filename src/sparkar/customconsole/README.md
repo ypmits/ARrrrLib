@@ -8,17 +8,11 @@ WARNING! Unfortunately Spark AR does not have a 'prefab' system that makes build
 ![alt text](https://github.com/ypmits/ARrrrLib/blob/develop/images/console_structure.png?raw=true)
 
 
-```javascript
-import CustomConsole from '[PATH]/FARLib/src/CustomConsole/CustomConsole';
-```
-
 ### Code Examples
 To start using the console you first have to create a new console like in the first example.
 ```javascript
-//Syntax
-var console = new CustomConsole(textObject, settings);
+const CustomConsole = require("./socialarlib").CustomConsole;
 
-//Example
 var console = new CustomConsole(textObject, {
    collapse:true, 
    maxLines: 3,

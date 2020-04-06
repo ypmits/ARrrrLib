@@ -5,9 +5,9 @@ ARrrrTween is a Tweening API for Spark AR Studio. It was made with the API of GS
 ### Code Examples
 You make a new tween like this:
 ```javascript
-const ARTween = require("./ARTween").ARTween;
-const Delay = require("./ARTween").Delay;
-const Ease = require("./ARTween").Ease;
+const ARTween = require("./socialarlib").ARTween;
+const Delay = require("./socialarlib").Delay;
+const Ease = require("./socialarlib").Ease;
 
 //Syntax
 new ARTween(object, values, autoplay);
@@ -83,17 +83,3 @@ Methods | description
 onComplete | *Parameters: function* <br> Executes function after all tweens in the object are completed.
 start | Starts/resumes the tween.
 pause | Pauses the tween.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
