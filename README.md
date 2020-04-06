@@ -8,11 +8,11 @@ SocialARLib also contains a lot of other gems that make developing for Spark AR 
 SparkAR (Facebook / Instagram)
 Feature | Description
 :--- | :---
-[ARTween](https://github.com/ypmits/ARrrrLib/tree/develop/src/sparkar//artween/ARTween?raw=true) | A complete Tweening-library in the style of good old TweenLite
-[CustomConsole](https://github.com/ypmits/ARrrrLib/tree/develop/src/sparkar//customconsole/CustomConsole) | Add a visual console to your scene so you can debug your projects on any device
-[CameraLookAt](https://github.com/ypmits/ARrrrLib/tree/develop/src/sparkar//cameralookat/CameraLookat) | Make something happen by looking at a specific object in the scene
-[IKSystem](https://github.com/ypmits/ARrrrLib/tree/develop/src/sparkar//iksystem/IKSystem) | A flexible IK-system. Handy if you need your character to use a bicycle
-[Math2](https://github.com/ypmits/ARrrrLib/tree/develop/src/sparkar//math2/Math2) | Handy math functions
+[ARTween](https://github.com/ypmits/ARrrrLib/tree/develop/src/sparkar/artween/ARTween?raw=true) | A complete Tweening-library in the style of good old TweenLite
+[CustomConsole](https://github.com/ypmits/ARrrrLib/tree/develop/src/sparkar/customconsole/CustomConsole) | Add a visual console to your scene so you can debug your projects on any device
+[CameraLookAt](https://github.com/ypmits/ARrrrLib/tree/develop/src/sparkar/cameralookat/CameraLookat) | Make something happen by looking at a specific object in the scene
+[IKSystem](https://github.com/ypmits/ARrrrLib/tree/develop/src/sparkar/iksystem/IKSystem) | A flexible IK-system. Handy if you need your character to use a bicycle
+[Math2](https://github.com/ypmits/ARrrrLib/tree/develop/src/sparkar/math2/Math2) | Handy math functions
 [ObjectFinder](https://github.com/ypmits/ARrrrLib/tree/develop/src/sparkar/objectfinder/ObjectFinder) | Find objects, or not and get some nice debug-logs
 <!-- [CustomUI](src/CustomUI) | A utility-class with some handy UI-functions
 [AudioObject](src/AudioObject) | For handling audio much easier
