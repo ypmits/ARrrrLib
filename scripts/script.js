@@ -83,15 +83,15 @@ ObjectFinder.findAll("IcoSphere", null, true).then(elements =>
 // var button_to_bottom_P = ObjectFinder.find("ToBottomButton");
 // log(`background:${background_P}, clear:${button_clear_P}, toTop:${button_to_top_P}, up:${button_up_P}, down:${button_down_P}, toBottom:${button_to_bottom_P}`);
 
-var customConsole = undefined;
-Promise.all([ObjectFinder.find("CustomConsoleBackground"), ObjectFinder.find("consoleTextfield")]).then(values => {
-	customConsole = new CustomConsole(values[0], values[1], 16, { collapse: true, maxLines: 7, resizeText: true });
-	customConsole.addClearButtonPromise( ObjectFinder.find("ClearButton") );
-	customConsole.addToTopButtonPromise( ObjectFinder.find("ToTopButton") );
-	customConsole.addScrollUpButtonPromise( ObjectFinder.find("UpButton") );
-	customConsole.addScrollDownButtonPromise( ObjectFinder.find("DownButton"));
-	customConsole.addScrollToBottomButtonPromise( ObjectFinder.find("ToBottomButton"));
-}, e => { console.log("Rejections: "+e)});
+Promise.all([ObjectFinder.find("CustomConsoleBackground"), ObjectFinder.find("consoleTextfield")]).then(values =>
+{
+	var customConsole = new CustomConsole(values[0], values[1], 16, { collapse: true, maxLines: 7, resizeText: true });
+	customConsole.addClearButton("ClearButton");
+	customConsole.addToTopButton("ToTopButton");
+	customConsole.addScrollUpButton("UpButton");
+	customConsole.addScrollDownButton("DownButton");
+	customConsole.addScrollToBottomButton("ToBottomButton");
+}, e => { console.log("Rejections: " + e) }); Scene.root.findFirst
 
 // Testing the CameraLookat:
 // new CameraLookAt({radius:10}).watch("IcoSphereHolder", e =>

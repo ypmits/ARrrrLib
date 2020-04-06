@@ -2,7 +2,7 @@
 
 function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
-var Scene$2 = _interopDefault(require('Scene'));
+var Scene$3 = _interopDefault(require('Scene'));
 var Reactive$1 = _interopDefault(require('Reactive'));
 var Diagnostics$1 = _interopDefault(require('Diagnostics'));
 
@@ -1015,6 +1015,7 @@ class ObjectFinder
 	}
 }
 
+const Scene$2 = require("Scene");
 const Time$1 = require('Time');
 const console = require('Diagnostics');
 const TouchGestures = require('TouchGestures');
@@ -1196,11 +1197,11 @@ class CustomConsole
 		// 	return this;
 		// }
 		
-		this.addClearButtonPromise = buttonPromise => abstrButtonPromise(buttonPromise, this.clear);
-		this.addToTopButtonPromise = buttonPromise => abstrButtonPromise(buttonPromise, this.scrollToTop);
-		this.addScrollUpButtonPromise = buttonPromise => abstrButtonPromise(buttonPromise, this.scrollUp);
-		this.addScrollDownButtonPromise = buttonPromise => abstrButtonPromise(buttonPromise, this.scrollDown);
-		this.addScrollToBottomButtonPromise = buttonPromise => abstrButtonPromise(buttonPromise, this.scrollToBottom);
+		this.addClearButton = buttonString => abstrButtonPromise(Scene$2.root.findFirst(buttonString), this.clear);
+		this.addToTopButton = buttonString => abstrButtonPromise(Scene$2.root.findFirst(buttonString), this.scrollToTop);
+		this.addScrollUpButton = buttonString => abstrButtonPromise(Scene$2.root.findFirst(buttonString), this.scrollUp);
+		this.addScrollDownButton = buttonString => abstrButtonPromise(Scene$2.root.findFirst(buttonString), this.scrollDown);
+		this.addScrollToBottomButton = buttonString => abstrButtonPromise(Scene$2.root.findFirst(buttonString), this.scrollToBottom);
 		
 		var abstrButtonPromise = (buttonP, func) => {
 			if(buttonP == null || func == null) return;
@@ -1370,7 +1371,7 @@ class CameraLookAt
 		this.loadObj = str =>
 		{
 			this.log(`[CameraLookAt] findObjectFromString: \"${str}\"`);
-			return Scene$2.root.findFirst(str).then(foundObj => {
+			return Scene$3.root.findFirst(str).then(foundObj => {
 				this.objToWatch = foundObj;
 				this.log(`[CameraLookAt] loaded Object: ${this.objToWatch} isReady: ${this.isReady}`);
 				if (this.isReady) this.doWatch();
@@ -1389,8 +1390,8 @@ class CameraLookAt
 
 		this.obj = obj != null ? obj : {};
 		this.obj.radius = this.obj.radius ? this.obj.radius : 10;
-		var findCamDir = Scene$2.root.findFirst(this.obj.cameraDirectionObjectName ? this.obj.cameraDirectionObjectName : "cameraDirection");
-		var findDebug = Scene$2.root.findFirst(this.obj.debugDrawerName ? this.obj.debugDrawerName : "debugDrawer");
+		var findCamDir = Scene$3.root.findFirst(this.obj.cameraDirectionObjectName ? this.obj.cameraDirectionObjectName : "cameraDirection");
+		var findDebug = Scene$3.root.findFirst(this.obj.debugDrawerName ? this.obj.debugDrawerName : "debugDrawer");
 		Promise.all([findCamDir, findDebug]).then(
 			values =>
 			{

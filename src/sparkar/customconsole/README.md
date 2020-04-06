@@ -11,7 +11,31 @@ WARNING! Unfortunately Spark AR does not have a 'prefab' system that makes build
 ### Code Examples
 To start using the console you first have to create a new console like in the first example.
 ```javascript
+const Scene = require("Scene");
 const CustomConsole = require("./socialarlib").CustomConsole;
+
+
+/**
+ * The first two parameters we need for the console are the background and the textfield.
+ * So we bring them in the following way:
+ * 
+ * Promise.all([backgroundPromise, textfieldPromise]).then(**makeTheConsole**);
+ * 
+ * Once the are loaded we can build the console.
+ * We connect the buttons to their functions by adding the string of
+ * the scene-name of that button
+ */
+
+Promise.all([Scene.root.findFirst("CustomConsoleBackground"), Scene.root.findFirst("consoleTextfield")]).then(values => {
+   var _console = new CustomConsole(values[0], values[1], 16, { collapse: true,    maxLines: 7, resizeText: true });
+   _console.addClearButtonPromise( Scene.root.findFirst("ClearButton") );
+   _console.addToTopButtonPromise( Scene.root.findFirst("ToTopButton") );
+   _console.addScrollUpButtonPromise( Scene.root.findFirst("UpButton") );
+   _console.addScrollDownButtonPromise( Scene.root.findFirst("DownButton"));
+   _console.addScrollToBottomButtonPromise( Scene.root.findFirst("ToBottomButton"));
+}, e => { console.log("Rejections: "+e)});
+
+
 
 var console = new CustomConsole(textObject, {
    collapse:true, 

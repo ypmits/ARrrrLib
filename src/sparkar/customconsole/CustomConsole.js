@@ -1,3 +1,4 @@
+const Scene = require("Scene");
 const Time = require('Time');
 const console = require('Diagnostics');
 const TouchGestures = require('TouchGestures');
@@ -179,11 +180,11 @@ export default class CustomConsole
 		// 	return this;
 		// }
 		
-		this.addClearButtonPromise = buttonPromise => abstrButtonPromise(buttonPromise, this.clear);
-		this.addToTopButtonPromise = buttonPromise => abstrButtonPromise(buttonPromise, this.scrollToTop);
-		this.addScrollUpButtonPromise = buttonPromise => abstrButtonPromise(buttonPromise, this.scrollUp);
-		this.addScrollDownButtonPromise = buttonPromise => abstrButtonPromise(buttonPromise, this.scrollDown);
-		this.addScrollToBottomButtonPromise = buttonPromise => abstrButtonPromise(buttonPromise, this.scrollToBottom);
+		this.addClearButton = buttonString => abstrButtonPromise(Scene.root.findFirst(buttonString), this.clear);
+		this.addToTopButton = buttonString => abstrButtonPromise(Scene.root.findFirst(buttonString), this.scrollToTop);
+		this.addScrollUpButton = buttonString => abstrButtonPromise(Scene.root.findFirst(buttonString), this.scrollUp);
+		this.addScrollDownButton = buttonString => abstrButtonPromise(Scene.root.findFirst(buttonString), this.scrollDown);
+		this.addScrollToBottomButton = buttonString => abstrButtonPromise(Scene.root.findFirst(buttonString), this.scrollToBottom);
 		
 		var abstrButtonPromise = (buttonP, func) => {
 			if(buttonP == null || func == null) return;
