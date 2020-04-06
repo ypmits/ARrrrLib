@@ -23,21 +23,20 @@ const TouchGestures = require('TouchGestures');
  */
 export default class CustomConsole
 {
-	constructor(background, textfield, fontSize, options)
+	constructor(background, textfield, fontSize = 16, options = null)
 	{
-		//#region Settings
-		var collapse = (options != null && options.collapse != null) ? options.collapse : false;
-		var maxLines = (options != null && options.maxLines != null) ? options.maxLines : 5;
-		var keepLog = (options != null && options.keepLog != null) ? options.keepLog : false;
-		var fontSize = fontSize;
-		
-		//#endregion
-		
-		//#region Fields
+		if(options == null) options = {collapse: true, maxLines: 7, keepLog: true, debug: false};
+		if(options.debug) console.log(`[CustomConsole] back:${background} tf:${textfield} size:${fontSize} options:${options}`);
+		else {
+			var collapse = (options.collapse != null) ? options.collapse : false;
+			var maxLines = (options.maxLines != null) ? options.maxLines : 7;
+			var keepLog = (options.keepLog != null) ? options.keepLog : false;
+
+		}
 		var startAt = 0;
 		var scrollStartAt = 0;
 		var lines = [];
-		textfield.text = "";
+		Time.setTimeout(() => {textfield.text = "";}, 1000);
 
 		var autoRefreshInterval;
 		if (options.resizeText) {
@@ -45,14 +44,12 @@ export default class CustomConsole
 			{
 				const lastScaleX = textfield.transform.scale.x.pinLastValue();
 				const newScaleX = e.scale.mul(lastScaleX);
-				console.log("Pinch lastScale:"+lastScaleX+" newScale:"+newScaleX);
+				this.log("Pinch lastScale:"+lastScaleX+" newScale:"+newScaleX);
 				textfield.fontSize += 1;
 			});
 		}
-		//#endregion
 
-		//#region Public Methods
-		this.log = function (string)
+		this.log = string =>
 		{
 			switch (typeof string)
 			{
@@ -74,43 +71,43 @@ export default class CustomConsole
 							}
 						}
 					}
-					var log = new logObject(string);
-					lines.push(log);
+					var l = new logObject(string);
+					lines.push(l);
 					refreshConsole();
 					break;
 				case "object":
-					var log = new logObject("[object]");
-					lines.push(log);
+					var l = new logObject("[object]");
+					lines.push(l);
 					refreshConsole();
 					break;
 				case "function":
 					try
 					{
 						string.pinLastValue();
-						var log = new logObject(string.pinLastValue());
-						lines.push(log);
+						var l = new logObject(string.pinLastValue());
+						lines.push(l);
 						refreshConsole();
 					} catch (err)
 					{
-						var log = new logObject("[function]");
-						lines.push(log);
+						var l = new logObject("[function]");
+						lines.push(l);
 						refreshConsole();
 					}
 					break;
 				case "undefined":
-					var log = new logObject("[undefined]");
-					lines.push(log);
+					var l = new logObject("[undefined]");
+					lines.push(l);
 					refreshConsole();
 					break;
 				default:
-					var log = new logObject("[type not found]");
-					lines.push(log);
+					var l = new logObject("[type not found]");
+					lines.push(l);
 					refreshConsole();
 					break;
 			}
 		}
 
-		this.watch = function (name, signal)
+		this.watch = (name, signal) =>
 		{
 			if (typeof signal == "function")
 			{
@@ -141,66 +138,64 @@ export default class CustomConsole
 			}
 		}
 
-		this.clear = function ()
+		this.clear = () =>
 		{
 			scrollStartAt = null;
-			textfield.text = "";
+			abstrTempTextInLog("Clear()", i => { textfield.text = "";});
 			lines = [];
 			startAt = 0;
 		}
 
-		this.scrollToTop = function ()
-		{
-			scrollStartAt = 0;
-		}
+		this.scrollToTop = () => { abstrTempTextInLog("ScrollToTop()"); scrollStartAt = 0; }
 
-		this.scrollUp = function ()
+		this.scrollUp = () =>
 		{
-			if (scrollStartAt != null)
-			{
-				scrollStartAt--;
-			} else
-			{
-				scrollStartAt = lines.length - maxLines - 1;
-			}
+			abstrTempTextInLog("ScrollUp()");
+			if (scrollStartAt != null) scrollStartAt--;
+			else scrollStartAt = lines.length - maxLines - 1;
 			if (scrollStartAt < 0) scrollStartAt = 0;
 		}
 
-		this.scrollDown = function ()
+		this.scrollDown = () =>
 		{
-			if (scrollStartAt != null)
-			{
-				scrollStartAt++;
-			} else
-			{
-				scrollStartAt = lines.length - maxLines + 1;
-			}
-			if (scrollStartAt > lines.length - maxLines)
-			{
-				scrollStartAt = null;
-			}
+			abstrTempTextInLog("ScrollDown()");
+			if (scrollStartAt != null) scrollStartAt++;
+			else scrollStartAt = lines.length - maxLines + 1;
+			if (scrollStartAt > lines.length - maxLines) scrollStartAt = null;
 		}
 
-		this.scrollToBottom = function ()
-		{
-			scrollStartAt = null;
-		}
+		this.scrollToBottom = () => { abstrTempTextInLog("ScrollToBottom()"); scrollStartAt = null; }
+
 
 		/**
-		 * Adds a button that will connects to a function when tapped on
+		 * Adds a button that will connects to a function when tapped on.
+		 * Use something like Scene.root.findFirst("buttonName") as the buttonObjPromise-parameter
 		 */
-		this.addButton = (buttonObj, clickFunc) =>
-		{
-			if (buttonObj == null || clickFunc == null) return;
-			TouchGestures.onTap(buttonObj).subscribe(e =>
-			{
-				clickFunc();
-			});
+		// this.addButton = (buttonObj, clickFunc) =>
+		// {
+		// 	if (buttonObj == null || clickFunc == null) return;
+			
+		// 	TouchGestures.onTap(buttonObj).subscribe(e => { clickFunc(); });
+		// 	return this;
+		// }
+		
+		this.addClearButtonPromise = buttonPromise => abstrButtonPromise(buttonPromise, this.clear);
+		this.addToTopButtonPromise = buttonPromise => abstrButtonPromise(buttonPromise, this.scrollToTop);
+		this.addScrollUpButtonPromise = buttonPromise => abstrButtonPromise(buttonPromise, this.scrollUp);
+		this.addScrollDownButtonPromise = buttonPromise => abstrButtonPromise(buttonPromise, this.scrollDown);
+		this.addScrollToBottomButtonPromise = buttonPromise => abstrButtonPromise(buttonPromise, this.scrollToBottom);
+		
+		var abstrButtonPromise = (buttonP, func) => {
+			if(buttonP == null || func == null) return;
+			buttonP.then(b => { TouchGestures.onTap(b).subscribe(e => func() ); })
 		}
-		//#endregion
 
-		// #region Private Methods
-		var refreshConsole = function ()
+		var abstrTempTextInLog = (toLog, endFunc = null, duration = .5) => {
+			this.log(toLog);
+			if(endFunc != null) Time.setTimeout(() => {endFunc();}, duration * 1000);
+		}
+
+		var refreshConsole = () =>
 		{
 			if (!keepLog)
 			{
@@ -257,9 +252,10 @@ export default class CustomConsole
 				}
 			}
 		}
-		//#endregion
 
-		//#region Classes
+
+
+
 		class logObject
 		{
 			constructor(string)
@@ -284,6 +280,5 @@ export default class CustomConsole
 				this.signal = signal;
 			}
 		}
-		//#endregion
 	}
 }

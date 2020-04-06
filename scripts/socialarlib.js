@@ -1,6 +1,11 @@
 'use strict';
 
-const Scene = require('Scene');
+function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
+
+var Scene$2 = _interopDefault(require('Scene'));
+var Reactive$1 = _interopDefault(require('Reactive'));
+var Diagnostics$1 = _interopDefault(require('Diagnostics'));
+
 const Animation = require('Animation');
 const Reactive = require('Reactive');
 const Time = require('Time');
@@ -23,6 +28,8 @@ class ARTween {
 	constructor(object, values, autoplay) {
 		//Set values and controls
 		this.object = object;
+		this.material = null;
+		this.object.getMaterial().then(m=>{this.material = m;});
 		this.values = values;
 
 		this.isPlaying = false;
@@ -143,8 +150,8 @@ class ARTween {
 			this.offset.transform.scaleY = this.object.transform.scaleY.pinLastValue();
 			this.offset.transform.scaleZ = this.object.transform.scaleZ.pinLastValue();
 			if(this.object.text == null) {
-				if(this.object.material != null) {
-					this.offset.material.opacity = this.object.material.opacity.pinLastValue();
+				if(this.material != null) {
+					this.material.opacity = this.material.opacity.pinLastValue();
 				}
 			}
 		}
@@ -159,7 +166,6 @@ class ARTween {
 		}
 		
 		this.values.forEach(valuesElement => {
-
 			this.EvaluateData(valuesElement);
 		});
 		
@@ -691,11 +697,11 @@ class Ease
 	static Linear() { return "linear"; }
 }
 
-const Scene$1 = require('Scene');
+const Scene = require('Scene');
 
 class Delay {
 	constructor(delay, completeFunction) {
-		var t = new ARTween(Scene$1.root,[{alpha:1, duration:delay, ease:Ease.Linear()}], true).onComplete(()=>{completeFunction();});
+		var t = new ARTween(Scene.root,[{alpha:1, duration:delay, ease:Ease.Linear()}], true).onComplete(()=>{completeFunction();});
 	}
 }
 
@@ -940,40 +946,73 @@ var ARFaceGestures = {
 	Blink
 };
 
-const Scene$2 = require('Scene');
+const Scene$1 = require('Scene');
 const Diagnostics = require('Diagnostics');
 
-class ObjectFinder {
-    // ------------Example------------
-    // var object = ObjectFinder.find("objectToFind"); // Find a object in the Scene.root
-    // var object = ObjectFinder.find("childObjectToFind",object); // Use a SceneObject to indicate the parent object (recommended)
-    // var object = ObjectFinder.find("childObjectToFind","objectToFind"); // Use a string to indicate the parent object
-    // --------------End--------------
-    static find(object, inside = null) {
-        if(object == null) {
-            Diagnostics.log("[error] no object name given");
-        } else if (typeof object != "string") {
-            Diagnostics.log("[error] object type has to be a string");
-        } else {
-            try {
-                if(inside == null) {
-                    return Scene$2.root.find(object);
-                } else {
-                    if(typeof inside == "string") {
-                        return Scene$2.root.find(inside).find(object);
-                    } else {
-                        return inside.find(object);
-                    }
-                }
-            } catch(e) {
-                if(inside == null) {
-                    Diagnostics.log(`[error] could not find "${object}" in the scene`);
-                } else {
-                    Diagnostics.log(`[error] could not find "${object}" in ${(typeof inside == "string")?inside:inside.name}`);
-                }
-            }
-        }
-    }
+/**
+Searches for objects in the sceneview.
+
+ObjectFinder.find(object, inside):
+
+var object = ObjectFinder.find("objectToFind"); // Find a object in the Scene.root
+var object = ObjectFinder.find("childObjectToFind",object); // Use a SceneObject to indicate the parent object (recommended)
+var object = ObjectFinder.find("childObjectToFind","objectToFind"); // Use a string to indicate the parent object
+
+Returns a promise
+*/
+class ObjectFinder
+{
+	static find(object, inside = null)
+	{
+		if (object == null)
+		{
+			Diagnostics.log("[error] no object name given");
+			return null;
+		} else if (typeof object != "string")
+		{
+			Diagnostics.log("[error] object type has to be a string");
+			return null;
+		} else
+		{
+			try
+			{
+				if (inside == null) return Scene$1.root.findFirst(object);
+				else
+				{
+					if (typeof inside == "string") return Scene$1.root.findFirst(inside).findFirst(object);
+					else return inside.findFirst(object);
+				}
+			} catch (e) { return ObjectFinder.handleError(e, object, inside); }
+		}
+	}
+
+	static findAll(objectNames, inside = null, recursive = true)
+	{
+		if (objectNames == null)
+		{
+			Diagnostics.log("[error] no objectnames are given");
+			return [];
+		} else
+		{
+			try
+			{
+				if (inside == null) return Scene$1.root.findAll(objectNames, {recursive:recursive});
+				else
+				{
+					if (typeof inside == "string") return Scene$1.root.findAll(inside, {recursive:recursive}).findAll(objectNames, {recursive:recursive});
+					else return inside.findAll(objectNames, {recursive:recursive});
+				}
+			} catch (e) { return ObjectFinder.handleError(e, objectNames, inside); }
+		}
+	}
+
+	static handleError(e, objectNames, inside = null)
+	{
+		var base = `[error] could not find "${objectNames}" in `;
+		var where = (inside == null) ? "the scene" : `${(typeof inside == "string") ? inside : inside.name}`;
+		Diagnostics.log(base + where);
+		return base + where;
+	}
 }
 
 const Time$1 = require('Time');
@@ -1001,20 +1040,20 @@ const TouchGestures = require('TouchGestures');
  */
 class CustomConsole
 {
-	constructor(background, textfield, fontSize, options)
+	constructor(background, textfield, fontSize = 16, options = null)
 	{
-		//#region Settings
-		var collapse = (options != null && options.collapse != null) ? options.collapse : false;
-		var maxLines = (options != null && options.maxLines != null) ? options.maxLines : 5;
-		var keepLog = (options != null && options.keepLog != null) ? options.keepLog : false;
-		
-		//#endregion
-		
-		//#region Fields
+		if(options == null) options = {collapse: true, maxLines: 7, keepLog: true, debug: false};
+		if(options.debug) console.log(`[CustomConsole] back:${background} tf:${textfield} size:${fontSize} options:${options}`);
+		else {
+			var collapse = (options.collapse != null) ? options.collapse : false;
+			var maxLines = (options.maxLines != null) ? options.maxLines : 7;
+			var keepLog = (options.keepLog != null) ? options.keepLog : false;
+
+		}
 		var startAt = 0;
 		var scrollStartAt = 0;
 		var lines = [];
-		textfield.text = "";
+		Time$1.setTimeout(() => {textfield.text = "";}, 1000);
 
 		var autoRefreshInterval;
 		if (options.resizeText) {
@@ -1022,14 +1061,12 @@ class CustomConsole
 			{
 				const lastScaleX = textfield.transform.scale.x.pinLastValue();
 				const newScaleX = e.scale.mul(lastScaleX);
-				console.log("Pinch lastScale:"+lastScaleX+" newScale:"+newScaleX);
+				this.log("Pinch lastScale:"+lastScaleX+" newScale:"+newScaleX);
 				textfield.fontSize += 1;
 			});
 		}
-		//#endregion
 
-		//#region Public Methods
-		this.log = function (string)
+		this.log = string =>
 		{
 			switch (typeof string)
 			{
@@ -1051,43 +1088,43 @@ class CustomConsole
 							}
 						}
 					}
-					var log = new logObject(string);
-					lines.push(log);
+					var l = new logObject(string);
+					lines.push(l);
 					refreshConsole();
 					break;
 				case "object":
-					var log = new logObject("[object]");
-					lines.push(log);
+					var l = new logObject("[object]");
+					lines.push(l);
 					refreshConsole();
 					break;
 				case "function":
 					try
 					{
 						string.pinLastValue();
-						var log = new logObject(string.pinLastValue());
-						lines.push(log);
+						var l = new logObject(string.pinLastValue());
+						lines.push(l);
 						refreshConsole();
 					} catch (err)
 					{
-						var log = new logObject("[function]");
-						lines.push(log);
+						var l = new logObject("[function]");
+						lines.push(l);
 						refreshConsole();
 					}
 					break;
 				case "undefined":
-					var log = new logObject("[undefined]");
-					lines.push(log);
+					var l = new logObject("[undefined]");
+					lines.push(l);
 					refreshConsole();
 					break;
 				default:
-					var log = new logObject("[type not found]");
-					lines.push(log);
+					var l = new logObject("[type not found]");
+					lines.push(l);
 					refreshConsole();
 					break;
 			}
 		};
 
-		this.watch = function (name, signal)
+		this.watch = (name, signal) =>
 		{
 			if (typeof signal == "function")
 			{
@@ -1118,66 +1155,64 @@ class CustomConsole
 			}
 		};
 
-		this.clear = function ()
+		this.clear = () =>
 		{
 			scrollStartAt = null;
-			textfield.text = "";
+			abstrTempTextInLog("Clear()", i => { textfield.text = "";});
 			lines = [];
 			startAt = 0;
 		};
 
-		this.scrollToTop = function ()
-		{
-			scrollStartAt = 0;
-		};
+		this.scrollToTop = () => { abstrTempTextInLog("ScrollToTop()"); scrollStartAt = 0; };
 
-		this.scrollUp = function ()
+		this.scrollUp = () =>
 		{
-			if (scrollStartAt != null)
-			{
-				scrollStartAt--;
-			} else
-			{
-				scrollStartAt = lines.length - maxLines - 1;
-			}
+			abstrTempTextInLog("ScrollUp()");
+			if (scrollStartAt != null) scrollStartAt--;
+			else scrollStartAt = lines.length - maxLines - 1;
 			if (scrollStartAt < 0) scrollStartAt = 0;
 		};
 
-		this.scrollDown = function ()
+		this.scrollDown = () =>
 		{
-			if (scrollStartAt != null)
-			{
-				scrollStartAt++;
-			} else
-			{
-				scrollStartAt = lines.length - maxLines + 1;
-			}
-			if (scrollStartAt > lines.length - maxLines)
-			{
-				scrollStartAt = null;
-			}
+			abstrTempTextInLog("ScrollDown()");
+			if (scrollStartAt != null) scrollStartAt++;
+			else scrollStartAt = lines.length - maxLines + 1;
+			if (scrollStartAt > lines.length - maxLines) scrollStartAt = null;
 		};
 
-		this.scrollToBottom = function ()
-		{
-			scrollStartAt = null;
-		};
+		this.scrollToBottom = () => { abstrTempTextInLog("ScrollToBottom()"); scrollStartAt = null; };
+
 
 		/**
-		 * Adds a button that will connects to a function when tapped on
+		 * Adds a button that will connects to a function when tapped on.
+		 * Use something like Scene.root.findFirst("buttonName") as the buttonObjPromise-parameter
 		 */
-		this.addButton = (buttonObj, clickFunc) =>
-		{
-			if (buttonObj == null || clickFunc == null) return;
-			TouchGestures.onTap(buttonObj).subscribe(e =>
-			{
-				clickFunc();
-			});
+		// this.addButton = (buttonObj, clickFunc) =>
+		// {
+		// 	if (buttonObj == null || clickFunc == null) return;
+			
+		// 	TouchGestures.onTap(buttonObj).subscribe(e => { clickFunc(); });
+		// 	return this;
+		// }
+		
+		this.addClearButtonPromise = buttonPromise => abstrButtonPromise(buttonPromise, this.clear);
+		this.addToTopButtonPromise = buttonPromise => abstrButtonPromise(buttonPromise, this.scrollToTop);
+		this.addScrollUpButtonPromise = buttonPromise => abstrButtonPromise(buttonPromise, this.scrollUp);
+		this.addScrollDownButtonPromise = buttonPromise => abstrButtonPromise(buttonPromise, this.scrollDown);
+		this.addScrollToBottomButtonPromise = buttonPromise => abstrButtonPromise(buttonPromise, this.scrollToBottom);
+		
+		var abstrButtonPromise = (buttonP, func) => {
+			if(buttonP == null || func == null) return;
+			buttonP.then(b => { TouchGestures.onTap(b).subscribe(e => func() ); });
 		};
-		//#endregion
 
-		// #region Private Methods
-		var refreshConsole = function ()
+		var abstrTempTextInLog = (toLog, endFunc = null, duration = .5) => {
+			this.log(toLog);
+			if(endFunc != null) Time$1.setTimeout(() => {endFunc();}, duration * 1000);
+		};
+
+		var refreshConsole = () =>
 		{
 			if (!keepLog)
 			{
@@ -1234,9 +1269,10 @@ class CustomConsole
 				}
 			}
 		};
-		//#endregion
 
-		//#region Classes
+
+
+
 		class logObject
 		{
 			constructor(string)
@@ -1261,12 +1297,151 @@ class CustomConsole
 				this.signal = signal;
 			}
 		}
-		//#endregion
+	}
+}
+
+/**
+CameraLookAt is a api for Spark AR Studio that checks if the user is looking at an object.
+This class will check if the pivot of sceneObjects is inside of the radius (so not the bounds)
+
+Before you can use it, you have to create a null object inside of the camera (but outside of the focal distance!).
+Name this object 'cameraDirection' and give it a z-position of 1.
+
+parameter:
+obj: {
+	radius: the radius of the trigger
+	debug: will console.log all kinds of important information. default: false
+	cameraDirectionObjectName: default: "cameraDirection"
+	debugDrawerName: default: "debugDrawer"
+}
+
+example:
+var obj = {
+	radius: 3
+}
+var cla = new CameraLookAt(obj);
+*/
+class CameraLookAt
+{
+	constructor(obj = null)
+	{
+		this.objToWatch = null;
+		this.isReady = false;
+
+		this.log = str => {
+			if(this.obj.debug) Diagnostics$1.log(str);
+		};
+		/**
+		 * This function will bind all the necessary parameters so you can use it
+		 */
+		this.doWatch = () =>
+		{
+			Diagnostics$1.log("[CameraLookAt] doWatch:" + this.objToWatch);
+			this.loadObj(this.objToWatch);
+			let objectAngleXZ = Reactive$1.atan2(this.objToWatch.worldTransform.x, this.objToWatch.worldTransform.z).mul(180 / Math.PI);
+			let objectAngleXZBack = Reactive$1.atan2(this.objToWatch.worldTransform.x.mul(-1), this.objToWatch.worldTransform.z.mul(-1)).mul(180 / Math.PI);
+			let objectAngleY = Reactive$1.atan2(Reactive$1.sqrt(Reactive$1.sum(this.objToWatch.worldTransform.x.pow(2), this.objToWatch.worldTransform.z.pow(2))), this.objToWatch.worldTransform.y).mul(-180 / Math.PI).add(90);
+
+			Reactive$1.andList([
+				// vertical
+				Reactive$1.lt(objectAngleY, this.camRotY.add(this.obj.radius / 2)),
+				Reactive$1.gt(objectAngleY, this.camRotY.sub(this.obj.radius / 2)),
+				// horizontal
+				Reactive$1.or(
+					//Use front size
+					Reactive$1.andList([
+						Reactive$1.lt(Reactive$1.abs(objectAngleXZ).sum(Reactive$1.abs(this.obj.radius / 2)), 180),
+						Reactive$1.lt(objectAngleXZ, this.camRotXZ.add(this.obj.radius / 2)),
+						Reactive$1.gt(objectAngleXZ, this.camRotXZ.sub(this.obj.radius / 2)),
+					]),
+					//Use back side
+					Reactive$1.andList([
+						Reactive$1.ge(Reactive$1.abs(objectAngleXZ).sum(Reactive$1.abs(this.obj.radius / 2)), 180),
+						Reactive$1.lt(objectAngleXZBack, this.camRotXZBack.add(this.obj.radius / 2)),
+						Reactive$1.gt(objectAngleXZBack, this.camRotXZBack.sub(this.obj.radius / 2)),
+					])
+				)
+			]).monitor({ fireOnInitialValue: false }).subscribe(e => {this.subscribeFunc(e);});
+		};
+
+		/**
+		 * Loads an object based on a search-string:
+		 */
+		this.loadObj = str =>
+		{
+			this.log(`[CameraLookAt] findObjectFromString: \"${str}\"`);
+			return Scene$2.root.findFirst(str).then(foundObj => {
+				this.objToWatch = foundObj;
+				this.log(`[CameraLookAt] loaded Object: ${this.objToWatch} isReady: ${this.isReady}`);
+				if (this.isReady) this.doWatch();
+			});
+		};
+
+		/**
+		 * Will watch an object
+		 */
+		this.watch = (str, subscribeFunc) =>
+		{
+			this.subscribeFunc = subscribeFunc;
+			this.log(`[CameraLookAt] watch: ${str}`);
+			this.loadObj(str);
+		};
+
+		this.obj = obj != null ? obj : {};
+		this.obj.radius = this.obj.radius ? this.obj.radius : 10;
+		var findCamDir = Scene$2.root.findFirst(this.obj.cameraDirectionObjectName ? this.obj.cameraDirectionObjectName : "cameraDirection");
+		var findDebug = Scene$2.root.findFirst(this.obj.debugDrawerName ? this.obj.debugDrawerName : "debugDrawer");
+		Promise.all([findCamDir, findDebug]).then(
+			values =>
+			{
+				var camDirObj = values[0];
+				var debugCam = values[1] == null ? null : values[1];
+				this.log(`camDir: ${camDirObj}`);
+				this.log(`debug: ${debugCam}`);
+				
+				
+				// Get Camera rotation from direction:
+				this.camRotY = Reactive$1.atan2(Reactive$1.sqrt(Reactive$1.sum(camDirObj.worldTransform.x.pow(2), camDirObj.worldTransform.z.pow(2))), camDirObj.worldTransform.y).mul(-180 / Math.PI).add(90).mul(-1);//cameraDirectionObject.worldTransform.y.mul(-90);
+				this.camRotXZ = Reactive$1.atan2(camDirObj.worldTransform.x.mul(-1), camDirObj.worldTransform.z.mul(-1)).mul(180 / Math.PI);
+				this.camRotXZBack = Reactive$1.atan2(camDirObj.worldTransform.x, camDirObj.worldTransform.z).mul(180 / Math.PI);
+
+				this.log("cam: " + camDirObj.name);
+				this.log("debug: " + debugCam == null ? "null" : debugCam);
+				this.log("radius: " + this.obj.radius);
+				this.log("cameraRotationY: " + this.camRotY.pinLastValue());
+				this.log("cameraRotationXZ: " + this.camRotXZ.pinLastValue());
+				this.log("cameraRotationXZBack: " + this.camRotXZBack.pinLastValue());
+
+				if(debugCam != null)
+				{
+					debugCam.angleInner = 0;
+					debugCam.angleOuter = this.obj.radius * Math.PI / 180;
+					debugCam.intensity = 0;
+				}
+				else
+				{
+					this.log(`[WARNING] there is no 'debugger' inside the scene, make sure to read to documentation on github to see how to use it`);
+				}
+				this.isReady = true;
+				if (this.objToWatch != null) this.doWatch();
+			},
+			e =>
+			{
+				this.log("CameraLookAt went wrong!" + e);
+			}
+		);
 	}
 }
 
 // Spark AR:
 
 module.exports = {
-	ARTween, Ease, Delay, Math2, ARFaceGestures, ObjectFinder, CustomConsole
+	ARTween,
+	Ease,
+	Delay,
+	Math2,
+	ARFaceGestures,
+	ObjectFinder,
+	CustomConsole,
+	CameraLookAt
 };
