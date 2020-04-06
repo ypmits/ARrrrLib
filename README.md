@@ -8,7 +8,7 @@ SocialARLib also contains a lot of other gems that make developing for Spark AR 
 SparkAR (Facebook / Instagram)
 Feature | Description
 :--- | :---
-[ARTween](src/sparkar/artween/ARTween) | A complete Tweening-library in the style of good old TweenLite
+[ARTween](src/sparkar/artween/ARTween?raw=true) | A complete Tweening-library in the style of good old TweenLite
 [CustomConsole](src/sparkar/customconsole/CustomConsole) | Add a visual console to your scene so you can debug your projects on any device
 [CameraLookAt](src/sparkar/cameralookat/CameraLookat) | Make something happen by looking at a specific object in the scene
 [IKSystem](src/sparkar/iksystem/IKSystem) | A flexible IK-system. Handy if you need your character to use a bicycle
