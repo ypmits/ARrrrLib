@@ -2,23 +2,23 @@
 *SocialARLib* is a collection of utility libraries for several Social Augmented Reality platforms, like Snapchat's [Lens Studio](https://lensstudio.snapchat.com/) and Facebook's [Spark AR](https://sparkar.facebook.com/ar-studio/) platform.
 The *[Pièce-de-Résistance](https://www.dictionary.com/browse/piece-de-resistance)* of this library is a complete and feature-rich tweening-library for Spark AR, with a syntax and API comparable to that of Greensock's GSAP platform.
 
-SocialARLib also contains a lot of other gems that make developing a Spark AR filter a lot easier.
+SocialARLib also contains a lot of other gems that make developing for Spark AR filter a lot easier.
 
 ## What's inside SocialARLib
 SparkAR (Facebook / Instagram)
 Feature | Description
 :--- | :---
-[ARTween](src/ARTween) | A complete Tweening-library in the style of good old TweenLite
-[CustomConsole](src/CustomConsole) | Add a visual console to your scene so you can debug your projects on any device
-[IKSystem](src/IKSystem) | A flexible IK-system. Handy if you need your character to use a bicycle
-[CameraLookAt](src/CameraLookat) | Make something happen by looking at a specific object in the scene
-[CustomUI](src/CustomUI) | A utility-class with some handy UI-functions
+[ARTween](src/sparkar/artween/ARTween) | A complete Tweening-library in the style of good old TweenLite
+[CustomConsole](src/sparkar/customconsole/CustomConsole) | Add a visual console to your scene so you can debug your projects on any device
+[CameraLookAt](src/sparkar/cameralookat/CameraLookat) | Make something happen by looking at a specific object in the scene
+[IKSystem](src/sparkar/iksystem/IKSystem) | A flexible IK-system. Handy if you need your character to use a bicycle
+[Math2](src/sparkar/math2/Math2) | Handy math functions
+[ObjectFinder](src/ObjectFinder) | Find objects, or not and get some nice debug-logs
+<!-- [CustomUI](src/CustomUI) | A utility-class with some handy UI-functions
 [AudioObject](src/AudioObject) | For handling audio much easier
 [DeviceInfo](src/DeviceInfo) | DeviceInfo provides some basic information about the device. It needs a reference to a canvas in Spark AR to do so.
-[Math2](src/Math2) | Handy math functions
-[ObjectFinder](src/ObjectFinder) | Find objects, or not and get some nice debug-logs
 [SceneLoader](src/SceneLoader) | For easy scene-manager
-[Patches](src/Patches) | A collection of ready-to-use patches
+[Patches](src/Patches) | A collection of ready-to-use patches -->
 
 Lens Studio (Snapchat)
 Feature | Description
