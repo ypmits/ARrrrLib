@@ -1,6 +1,6 @@
 # AssetLib
 ### Introduction
-The AssetLib can be used to retrieve a set of scene objects, materials and textures ahead of running the application, so that no async operations like findFirst need to happen in other parts of the application.
+The AssetLib can be used to asynchronously retrieve a set of scene objects, materials and textures ahead of running the application, so that no async operations like findFirst need to happen in the actual application logic.
 
 Ported from [SparkAR-AssetsLoader](https://github.com/data-sapiens/SparkAR-AssetsLoader) by [Data Sapiens](https://github.com/data-sapiens)
 
