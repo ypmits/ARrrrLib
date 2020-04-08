@@ -24,13 +24,18 @@ export class AssetLib {
 	 * const textureNames = ["texture1, texture2"]; 
 	 * 
 	 * assetLib.load(sceneObjectNames, materialNames, textureNames)
-	 *    .then(loadedAssets => {
+	 *    .then(assets => {
      *       // All assets are loaded, 
      *       // start your application logic here.
      * 
      *       // ...
+	 * 
+	 * 		 // Retrieve your assets right here:
+	 * 		 assets.sceneObjects["sceneObject1"];
+	 * 		 assets.materials["material"];
+	 * 		 assets.textures["texture1"];
      * 
-     *       // Now from anywhere in your application you 
+     *       // Or, from anywhere in your application, you 
      *       // can use these methods to retrieve the 
      *       // assets you loaded:
      *       assetLib.getSceneObject("sceneObject1");
@@ -58,6 +63,7 @@ export class AssetLib {
 	 * @param {string[]} [sceneObjectNames=[]]
 	 * @param {string[]} [materialNames=[]]
 	 * @param {string[]} [textureNames=[]]
+	 * @returns {Promise<{sceneObjects: {}, materials: {}, textures: {}}>} 
 	 */
 	load(sceneObjectNames = [], materialNames = [], textureNames = []) {
 		// @ts-ignore

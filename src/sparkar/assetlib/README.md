@@ -14,25 +14,30 @@ const materialNames = ["material1, material2"];
 const textureNames = ["texture1, texture2"];
 
 assetLib.load(sceneObjectNames, materialNames, textureNames)
-   .then(loadedAssets => {
-        // All assets are loaded, 
-        // start your application logic here.
+  .then(assets => {
+    // All assets are loaded,
+    // start your application logic here.
 
-        // ...
+    // ...
 
-        // Now from anywhere in your application you 
-        // can use these methods to retrieve the 
-        // assets you loaded:
-        assetLib.getSceneObject("sceneObject1");
-        assetLib.getMaterial("material1");
-        assetLib.getTexture("texture1");
-    });
+    // Retrieve your assets right here:
+    assets.sceneObjects["sceneObject1"];
+    assets.materials["material"];
+    assets.textures["texture1"];
+
+    // Or, from anywhere in your application, you
+    // can use these methods to retrieve the 
+    // assets you loaded:
+    assetLib.getSceneObject("sceneObject1");
+    assetLib.getMaterial("material1");
+    assetLib.getTexture("texture1");
+  });
 ```
 
 **IMPORTANT!** Make sure you are loading all your assets before you start the rest of your application logic.
 
 ### Migrating to v85 and up
-The AssetLib can be particulary useful in migrating older applications to Spark AR version 85 and up. If you have a complex application it can be hard to figure out what exactly you need to preload. Simply follow these steps:
+The AssetLib can be particulary useful in migrating older applications to the asynchronous Spark AR API of version 85 and up. If you have a complex application it can be hard to figure out what exactly you need to preload. Simply follow these steps:
 
 ```javascript
 // Enable storing the names of used assets
