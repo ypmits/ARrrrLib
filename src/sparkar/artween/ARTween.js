@@ -303,8 +303,8 @@ export default class ARTween {
 				}
 
 				//Opacity
-				if(animation.id == "opacity") {
-					this.object.material.opacity = animation.signal;
+				if(animation.id == "opacity" && this.material != null) {
+					this.material.opacity = animation.signal;
 				}
 			});
 
@@ -355,8 +355,8 @@ export default class ARTween {
 				}
 				//Materials
 				//Opacity
-				if(animation.id == "opacity") {
-					this.object.material.opacity = animation.signal;
+				if(animation.id == "opacity" && this.material != null) {
+					this.material.opacity = animation.signal;
 				}
 			});
 		}
@@ -451,10 +451,10 @@ export default class ARTween {
 		}
 		//Material
 		if(this.object.text == null) {
-			if(this.object.material != null && this.object.text == null) {
+			if(this.material != null && this.object.text == null) {
 				if (data.opacity != null) {
 					id = "opacity";
-					var startEnd = this.CheckValue(data.opacity, this.offset.material.opacity);
+					var startEnd = this.CheckValue(data.opacity, this.material.opacity);
 					start = startEnd.start;
 					end = startEnd.end;
 				}

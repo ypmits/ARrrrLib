@@ -14,15 +14,15 @@ Returns a promise
 */
 export default class ObjectFinder
 {
-	static find(object, inside = null)
+	static find(object, inside = null, options = null)
 	{
 		if (object == null)
 		{
-			Diagnostics.log("[error] no object name given");
+			if(options.log) options.log("[error] no object name given");
 			return null;
 		} else if (typeof object != "string")
 		{
-			Diagnostics.log("[error] object type has to be a string");
+			if(options.log) options.log("[error] object type has to be a string");
 			return null;
 		} else
 		{
@@ -42,7 +42,7 @@ export default class ObjectFinder
 	{
 		if (objectNames == null)
 		{
-			Diagnostics.log("[error] no objectnames are given");
+			if(options.log) options.log("[error] no objectnames are given");
 			return [];
 		} else
 		{
@@ -62,7 +62,7 @@ export default class ObjectFinder
 	{
 		var base = `[error] could not find "${objectNames}" in `;
 		var where = (inside == null) ? "the scene" : `${(typeof inside == "string") ? inside : inside.name}`;
-		Diagnostics.log(base + where);
+		if(options.log) options.log(base + where);
 		return base + where;
 	}
 }

@@ -14,7 +14,7 @@
  * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
  */
 
-const log = require('Diagnostics').log;
+const diagnose = require('Diagnostics').log;
 const Scene = require('Scene');
 const Reactive = require("Reactive");
 
@@ -27,62 +27,74 @@ const CustomConsole = require("./socialarlib").CustomConsole;
 const CameraLookAt = require("./socialarlib").CameraLookAt;
 const Math2 = require("./socialarlib").Math2;
 
-// ObjectFinder:
-// var promise1 = ObjectFinder.find("IcoSphereHolder").then(element => {
-// 	log(`[ObjectFinder test:find] Found the element: ${element}`);
-// });
-// var promise2 = ObjectFinder.find("IcoSphereHolder0").then(element => {
-// 	log(`[ObjectFinder test:find] Found the element: ${element}`);
-// });
-// Promise.all([promise1, promise2]).then(v => {
-// 	log(`All are good: (num:${v.length})`);
-// });
-
-ObjectFinder.find("IcoSphereHolder").then(el1 =>
+var debug = true;
+var logInCustomConsole = true;
+var customConsole = null;
+var log = str =>
 {
-	ObjectFinder.find("IcoSphereHolder0").then(el2 =>
+	if (!debug) return;
+	if (logInCustomConsole) if (customConsole != null) customConsole.log(str);
+	else diagnose(str);
+}
+
+
+
+// -------------
+// ObjectFinder:
+// -------------
+// 
+var of_bool = false;
+var objsToFind = [
+	ObjectFinder.find("IcoSphereHolder"),
+	ObjectFinder.find("IcoSphereHolder0")
+]
+Promise.all(objsToFind).then(v =>
+{
+	log(`[ObjectFinder] All are good: (num:${v.length})`);
+	v.forEach((obj, i) =>
 	{
-		el1.transform.x = Reactive.mul(el2.transform.x, Reactive.val(1));
+		log(`[ObjectFinder] element #${i}: ${obj} name:${obj.name}`);
 	});
+	log("");
 });
 
+// Find all items with name IcoSphere:
 ObjectFinder.findAll("IcoSphere", null, true).then(elements =>
 {
-	// log(`[ObjectFinder test:findAll] Found ${elements.length}:`);
-	for (let i = 0; i < elements.length; i++)
+	log(`[ObjectFinder test:findAll] Found ${elements.length}:`);
+	elements.forEach(element =>
 	{
-		const element = elements[i];
-		// log("    - sphere:"+element);
-	}
+		log(`    - sphere:${element}`);
+	});
+	log("");
 });
 
+
+
+
+// -----------------------------------
 // Testing the 'Tweening' and 'Delay':
+// -----------------------------------
 ObjectFinder.find("faceMesh").then(fm =>
 {
-	log(`faceMesh found (name:${fm.name})! Continueing...`);
 	fm.transform.scaleX = Reactive.val(2);
 	fm.transform.scaleZ = Reactive.val(2);
 	new Delay(1000, () =>
 	{
 		new ARTween(fm, [
 			{ rotationZ: 360, duration: 2000 },
-			{ scaleX: .6, duration: 2000, loop: -1, yoyo: true, ease: Ease.InOutQuad() },
-			{ scaleY: 3, duration: 2000, loop: -1, yoyo: true, ease: Ease.InOutQuad() },
-			{ scaleZ: 0, duration: 2000, loop: -1, yoyo: true, ease: Ease.InOutQuad() }
+			{ scaleX: .8, duration: 2000, loop: -1, yoyo: true, ease: Ease.InOutQuad() },
+			{ scaleY: 2, duration: 2000, loop: -1, yoyo: true, ease: Ease.InOutQuad() }
 		]).onComplete(() => { log("Facemesh done animation (ARTween check!)"); });
 	});
 });
 
-// Testing the Custom-console:
-// var background_P = ;
-// var textfield_P = ;
-// var button_clear_P = ObjectFinder.find("ClearButton");
-// var button_to_top_P = ObjectFinder.find("ToTopButton");
-// var button_up_P = ObjectFinder.find("UpButton");
-// var button_down_P = ObjectFinder.find("DownButton");
-// var button_to_bottom_P = ObjectFinder.find("ToBottomButton");
-// log(`background:${background_P}, clear:${button_clear_P}, toTop:${button_to_top_P}, up:${button_up_P}, down:${button_down_P}, toBottom:${button_to_bottom_P}`);
 
+
+
+// ---------------------------
+// Testing the Custom-console:
+// ---------------------------
 Promise.all([ObjectFinder.find("CustomConsoleBackground"), ObjectFinder.find("consoleTextfield")]).then(values =>
 {
 	var customConsole = new CustomConsole(values[0], values[1], 16, { collapse: true, maxLines: 7, resizeText: true });
@@ -92,47 +104,51 @@ Promise.all([ObjectFinder.find("CustomConsoleBackground"), ObjectFinder.find("co
 	customConsole.addScrollDownButton("DownButton");
 	customConsole.addScrollToBottomButton("ToBottomButton");
 	customConsole.log("hello world");
-	ObjectFinder.find("faceMesh").then(fm => { customConsole.watch("faceX", fm.cameraTransform.x); })
-	// customConsole.watch("faceX", face.cameraTransform.x);
+	// ObjectFinder.find("faceMesh").then(fm => {
+	// 	customConsole.watch("faceX", fm.cameraTransform.x);
+	// })
 }, e => { console.log("Rejections: " + e) }); Scene.root.findFirst
 
-//Will add '>> hello world' to the console
 
-//Will add '<O> faceX: 0.434275532' to the console
-//The variable will update in realtime
 
+
+
+// -------------------------
 // Testing the CameraLookat:
-// new CameraLookAt({radius:10}).watch("IcoSphereHolder", e =>
-// {
-// 	customConsole.log("value: "+e.newValue);
-// });
-// new CameraLookAt().watch("IcoSphereHolder0", e =>
-// {
-// 	customConsole.log("value: "+e.newValue);
-// });
-// new CameraLookAt().watch("IcoSphereHolder1", e =>
-// {
-// 	customConsole.log("value: "+e.newValue);
-// });
-// new CameraLookAt().watch("IcoSphereHolder2", e =>
-// {
-// 	customConsole.log("value: "+e.newValue);
-// });
+// -------------------------
+var obj = { radius: 10, debug: true, log: log }
+new CameraLookAt(obj).watch("IcoSphereHolder", e =>
+{
+	if (customConsole != null)
+	{
+		log(`value`);
+		// customConsole.log(`value:${e.newValue}`);
+	}
+});
+new CameraLookAt(obj).watch("IcoSphereHolder0", e =>
+{
+	if (customConsole != null)
+	{
+		log(`value`);
+		customConsole.log(`value:${e.newValue}`);
+	}
+});
+new CameraLookAt(obj).watch("IcoSphereHolder1", e =>
+{
+	log(`value`);
+	if (customConsole != null)
+	{
+		customConsole.log(`value:${e.newValue}`);
+	}
+});
+new CameraLookAt(obj).watch("IcoSphereHolder2", e =>
+{
+	if (customConsole != null)
+	{
+		customConsole.log(`value:${e.newValue}`);
+	}
+});
 
-// Scene.root.findFirst("").then(obj =>
-// {
-// 	let cameraLookAt = new CameraLookAt(10, true);
-// 	cameraLookAt.watch(obj).monitor({ fireOnInitialValue: true }).subscribe(e =>
-// 	{
-// 		if (e.newValue)
-// 		{
-// 			console.log("object inside radius");
-// 		} else
-// 		{
-// 			console.log("object outside radius");
-// 		}
-// 	});
-// });
 /**
 
 
